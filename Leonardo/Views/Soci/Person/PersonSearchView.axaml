@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:ViewModels"
+             xmlns:ui="using:ControlStyles"
+             xmlns:r="using:ReactiveUI.Avalonia"
+             KeyboardNavigation.TabNavigation="Cycle"
+             Background="Transparent"
+             x:CompileBindings="False"
+             x:Class="Leonardo.PersonSearchView">
+
+    <Grid x:Name="MainGrid" >
+    
+        <Grid.Resources>
+            <!-- Azzera i vincoli di larghezza minimi del tema per il DatePicker -->
+            <x:Double x:Key="DatePickerThemeMinWidth">0</x:Double>
+            <x:Double x:Key="DatePickerThemeMaxWidth">1000</x:Double>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/> <!-- PopupBorder -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+    
+    </Grid>
+  
+</UserControl>

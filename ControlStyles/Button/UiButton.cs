@@ -1,0 +1,52 @@
+﻿using Avalonia;
+using Avalonia.Controls;
+
+namespace ControlStyles
+{
+    public class UiButton : Button
+    {
+        protected override Type StyleKeyOverride => typeof(Button);
+
+        public UiButton()
+        {
+            ToolTipTextProperty.Changed.AddClassHandler<UiButton>(ToolTipTextChanged);
+            this.Classes.Add("UiButtonStyle");
+        }
+
+        #region ToolTipText Property
+
+        public static readonly StyledProperty<string> ToolTipTextProperty =
+                               AvaloniaProperty.Register<UiButton, string>(nameof(ToolTipText), 
+                                   defaultValue: string.Empty);
+
+        public string ToolTipText
+        {
+            get => GetValue(ToolTipTextProperty);
+            set
+            {
+                SetValue(ToolTipTextProperty, value);
+                if (value != string.Empty)
+                {
+                    PseudoClasses.Set(":ToolTipText", true);
+                }
+                else PseudoClasses.Remove(":ToolTipText");
+            }
+
+        }
+
+        private void ToolTipTextChanged(UiButton titolo, AvaloniaPropertyChangedEventArgs args)
+        {
+            if (ToolTipText != string.Empty)
+            {
+                ToolTip.SetTip(titolo, ToolTipText);
+            }
+            else
+            {
+                titolo.ClearValue(ToolTip.TipProperty);
+            }
+
+        }
+
+        #endregion
+    }
+}
