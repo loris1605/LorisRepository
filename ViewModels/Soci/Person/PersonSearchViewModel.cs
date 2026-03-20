@@ -1,6 +1,7 @@
 ﻿using Models.Repository;
 using ReactiveUI;
 using SysNet;
+using SysNet.Converters;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
@@ -20,7 +21,7 @@ namespace ViewModels
 
             this.WhenActivated(d =>
             {
-                //OnCognomeFocus().FireAndForget();
+                OnCognomeFocus().FireAndForget();
 
                 Disposable.Create(() => {
                     System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
@@ -60,6 +61,14 @@ namespace ViewModels
             // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
             await Task.Delay(200);
             await CognomeFocus.Handle(Unit.Default).ToTask();
+
+        }
+
+        private async Task OnNomeFocus()
+        {
+            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
+            await Task.Delay(200);
+            await NomeFocus.Handle(Unit.Default).ToTask();
 
         }
     }

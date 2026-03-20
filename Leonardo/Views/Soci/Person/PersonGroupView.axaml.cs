@@ -82,6 +82,11 @@ public partial class PersonGroupView : ReactiveUserControl<PersonGroupViewModel>
                 .DisposeWith(d);
 
             this.BindCommand(ViewModel,
+                vm => vm.PersonSearchCommand,
+                v => v.FilterButton)
+                .DisposeWith(d);
+
+            this.BindCommand(ViewModel,
                 vm => vm.FilterCommand,
                 v => v.CancelFilterButton)
                 .DisposeWith(d);

@@ -201,7 +201,11 @@ namespace ViewModels
 
         private async Task OnPersonSearch()
         {
-            await Task.CompletedTask;
+            if (HostScreen is ISociScreen sociHost)
+            {
+                sociHost.GroupEnabled = false;
+                await sociHost.SociInputRouter.Navigate.Execute(new PersonSearchViewModel(sociHost));
+            }
         }
 
         private async Task OnCancelFilter()

@@ -62,6 +62,9 @@ namespace Leonardo
                         new PersonInputView(), typeof(IViewFor<PersonDelViewModel>));
 
             Locator.CurrentMutable.Register(() =>
+                        new PersonSearchView(), typeof(IViewFor<PersonSearchViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
                         new SocioInputView(), typeof(IViewFor<CodiceSocioAddViewModel>));
 
             Locator.CurrentMutable.Register(() =>

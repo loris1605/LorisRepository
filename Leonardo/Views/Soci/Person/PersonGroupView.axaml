@@ -77,11 +77,13 @@
 
             <ui:UiButton x:Name="FilterButton"
                          MinWidth="50"
-                         Margin="20,5"
+                         Margin="20,0"
                          DockPanel.Dock="Top"
                          ToolTipText="CERCA SOCIO"
                          HorizontalAlignment="Left"
                          Command="{Binding Path=AddCommand}">
+
+                <Image Source="avares://ControlStyles/Resources/SearchIcon.png" Width="30" Height="30" />
 
             </ui:UiButton>
         
