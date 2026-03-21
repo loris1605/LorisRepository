@@ -5,6 +5,7 @@ using SysNet.Converters;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
+using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Windows;
 
@@ -23,7 +24,27 @@ namespace ViewModels
             {
                 OnCognomeFocus().FireAndForget();
 
-                Disposable.Create(() => {
+                this.WhenAnyValue(x => x.AnagraficaChecked)
+                    .Where(value => value == true) // Filtra: procedi solo se è true
+                    .ObserveOn(RxApp.MainThreadScheduler) // Assicurati di essere sul thread UI
+                    .Subscribe(_ => OnCognomeFocus().FireAndForget())
+                    .DisposeWith(d);
+
+                this.WhenAnyValue(x => x.SocioChecked)
+                    .Where(value => value == true) // Filtra: procedi solo se è true
+                    .ObserveOn(RxApp.MainThreadScheduler) // Assicurati di essere sul thread UI
+                    .Subscribe(_ => OnSocioFocus().FireAndForget())
+                    .DisposeWith(d);
+
+                this.WhenAnyValue(x => x.TesseraChecked)
+                    .Where(value => value == true) // Filtra: procedi solo se è true
+                    .ObserveOn(RxApp.MainThreadScheduler) // Assicurati di essere sul thread UI
+                    .Subscribe(_ => OnTesseraFocus().FireAndForget())
+                    .DisposeWith(d);
+
+
+                Disposable.Create(() =>
+                {
                     System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
                 }).DisposeWith(d);
 
@@ -34,7 +55,6 @@ namespace ViewModels
         {
             Q?.Dispose();
             Q = null;
-            DataSource = null;
         }
 
         protected override async Task OnLoading()
@@ -46,7 +66,19 @@ namespace ViewModels
 
         protected async override Task OnSaving()
         {
-            await Task.CompletedTask;
+            // se il numero di tessera è diverso da zero esegue la ricerca solo sulla tessera
+            if (TesseraChecked && GetNumeroTessera != "")
+            {
+                int personid = await Q.FirstIdPersonByNumeroTessera(NumeroTessera);
+
+                if (personid != 0) { OnBack(personid); }
+                else
+                {
+                    InfoLabel = "Nessuna persona trovata";
+                    OnTesseraFocus().FireAndForget();
+                }
+                return;
+            }
         }
 
         void ResetAllCombos()
@@ -63,7 +95,6 @@ namespace ViewModels
             await CognomeFocus.Handle(Unit.Default).ToTask();
 
         }
-
         private async Task OnNomeFocus()
         {
             // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
@@ -71,9 +102,62 @@ namespace ViewModels
             await NomeFocus.Handle(Unit.Default).ToTask();
 
         }
+
+        private async Task OnSocioFocus()
+        {
+            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
+            await Task.Delay(200);
+            await SocioFocus.Handle(Unit.Default).ToTask();
+
+        }
+
+        private async Task OnTesseraFocus()
+        {
+            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
+            await Task.Delay(200);
+            await TesseraFocus.Handle(Unit.Default).ToTask();
+
+        }
+
+        private void OnRicerca()
+        {
+            
+
+            //// se il campo codice socio è diverso da zero esegue la ricerca solo su quello
+            //if (SocioChecked && NumeroSocio != "0")
+            //{
+            //    int personid = Q.FirstIdByNumeroSocio(NumeroSocio);
+
+            //    if (personid != 0)
+            //    {
+            //        InputNavigator.NotifyColleagues("BackSaved", personid);
+            //    }
+            //    else
+            //    {
+            //        InfoLabel2 = "Nessuna persona trovata";
+            //        NumeroSocioFocus = true;
+            //    }
+            //    return;
+            //}
+
+            ////Inizia la ricerca sulla base delle combos selezionate
+            //StartSearch(CognomeSelectedValue, NomeSelectedValue, NatoilSelectedValue);
+            ////SocioParent.PersonVD.SelectedIndex = 0;
+            ////// riallinea il contratto con la SociVM
+
+            //if (IsModelEmpty())
+            //{
+            //    InfoLabel2 = "Nessuna persona trovata";
+            //    CognomeFocus = true;
+            //    return;
+            //}
+
+            //InputNavigator.NotifyColleagues("BackFiltered", DataSource);
+            //return;
+        }
     }
 
-    public partial class PersonSearchViewModel
+        public partial class PersonSearchViewModel
     {
         #region Enabled
 

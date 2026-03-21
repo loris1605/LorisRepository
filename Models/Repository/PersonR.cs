@@ -108,6 +108,16 @@ namespace Models.Repository
             return result ?? new PersonMap();
         }
 
+        public async Task<int> FirstIdPersonByNumeroTessera(string numeroTessera)
+        {
+            var result = await _ctx.Tessere
+                .AsNoTracking()
+                .Where(t => t.NumeroTessera == numeroTessera)
+                .Select(t => t.Socio!.PersonId)
+                .FirstOrDefaultAsync();
+            return result; // Se non trova nulla, ritorna 0 (default int)
+        }
+
         public async Task<bool> HasCodiciSocio(int idperson)
         {
             return await _ctx.Soci.AnyAsync(s => s.PersonId == idperson);

@@ -31,6 +31,7 @@ namespace ControlStyles
         {
             this.HorizontalContentAlignment = HorizontalAlignment.Center;
             this.VerticalContentAlignment = VerticalAlignment.Center;
+
             // In Avalonia il "Changed" si sottoscrive tramite l'osservabile della proprietà
             ComboTypeProperty.Changed.AddClassHandler<UiFindComboBox>((x, e) => OnComboTypeChanged(x, e));
         }
@@ -112,8 +113,8 @@ namespace ControlStyles
 
             this.ItemsSource = comboCollection;
             this.DisplayMemberBinding = new Binding("FindType");
+            this.SelectedValueBinding = new Binding("Index");
 
-            
             this.SelectedIndex = 0;
 
         }

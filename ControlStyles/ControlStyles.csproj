@@ -8,13 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Remove="Assets\**" />
+    <Compile Remove="Assets\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <None Remove="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaXaml Remove="Border\BorderStyles.axaml" />
     <AvaloniaXaml Remove="Button\ButtonStyles.axaml" />
     <AvaloniaXaml Remove="Themes\MyStyles.axaml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\ExitIcon.png" />
     <None Remove="Resources\AbbonamentoIcon.png" />
     <None Remove="Resources\AddSocioIcon.png" />
     <None Remove="Resources\AggiungiIcon.png" />
@@ -147,10 +153,6 @@
     <AvaloniaResource Include="Resources\UserRemoveIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assets\" />
   </ItemGroup>
 
 </Project>
