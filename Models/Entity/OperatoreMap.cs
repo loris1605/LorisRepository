@@ -10,5 +10,8 @@
         public string NomePostazione {  get; set; } = string.Empty;
         public string TipoPostazione {  get; set; } = string.Empty;
 
+        public new string? Titolo => $"{NomeOperatore} - {(Abilitato ? "Abilitato" : "Non abilitato")}";
+
+
     }
 }

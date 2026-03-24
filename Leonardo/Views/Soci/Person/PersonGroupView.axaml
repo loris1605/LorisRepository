@@ -80,8 +80,7 @@
                          Margin="20,0"
                          DockPanel.Dock="Top"
                          ToolTipText="CERCA SOCIO"
-                         HorizontalAlignment="Left"
-                         Command="{Binding Path=AddCommand}">
+                         HorizontalAlignment="Left">
 
                 <Image Source="avares://ControlStyles/Resources/SearchIcon.png" Width="30" Height="30" />
 
@@ -222,8 +221,7 @@
                                      MinWidth="50"
                                      Margin="20,5"
                                      ToolTipText="AGGIUNGI CODICE SOCIO"
-                                     HorizontalAlignment="Center"
-                                     Command="{Binding Path=AddSocioCommand}">
+                                     HorizontalAlignment="Center">
 
                             <Image Source="avares://ControlStyles/Resources/AddSocioIcon.png" Width="34" Height="34" />
                         
@@ -233,8 +231,7 @@
                                      MinWidth="50"
                                      Margin="20,5"
                                      ToolTipText="CANCELLA CODICE SOCIO"
-                                     HorizontalAlignment="Center"
-                                     Command="{Binding Path=DelSocioCommand}">
+                                     HorizontalAlignment="Center">
 
                             <Image Source="avares://ControlStyles/Resources/CancellaIcon.png" Width="34" Height="34" />
                         
@@ -244,8 +241,7 @@
                                      MinWidth="50"
                                      Margin="20,5"
                                      ToolTipText="MODIFICA CODICE SOCIO"
-                                     HorizontalAlignment="Center"
-                                     Command="{Binding Path=UpdSocioCommand}">
+                                     HorizontalAlignment="Center">
 
                             <Image Source="avares://ControlStyles/Resources/ModificaIcon.png" Width="34" Height="34" />
                         

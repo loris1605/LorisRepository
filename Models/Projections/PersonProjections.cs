@@ -7,7 +7,7 @@ namespace Models.Projections
 {
     public static class PersonProjections
     {
-        public static PersonMap PeopleToPersonMap(Person p, Socio? s, Tessera? t) => new PersonMap
+        public static PersonMap PeopleToPersonMap(Person p, Socio? s, Tessera? t) => new()
         {
             Id = p.Id,
             Cognome = p.SurName ?? string.Empty,

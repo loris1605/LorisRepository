@@ -171,11 +171,17 @@ public partial class PersonSearchView : ReactiveUserControl<PersonSearchViewMode
                       v => v.NomeCombo.SelectedValue)
                 .DisposeWith(d);
 
-            ////Bind DataNascitaOffset to DataNascitaPicker
-            //this.Bind(ViewModel,
-            //          vm => vm.DataNascitaOffSet,
-            //          v => v.DataNascitaPicker.SelectedDate)
-            //    .DisposeWith(d);
+            //Bind DataNascitaOffset to DataNascitaPicker
+            this.Bind(ViewModel,
+                      vm => vm.DataNascitaOffSet,
+                      v => v.DataNascitaPicker.SelectedDate)
+                .DisposeWith(d);
+
+            //Bind SelectedValue to NatoilCombo
+            this.Bind(ViewModel,
+                      vm => vm.NatoilSelectedValue,
+                      v => v.NatoilCombo.SelectedValue)
+                .DisposeWith(d);
 
             //Bind Codice Socio to TextBox
             this.Bind(ViewModel,
@@ -264,10 +270,10 @@ public partial class PersonSearchView : ReactiveUserControl<PersonSearchViewMode
             //        v => v.NumeroTesseraLabel.IsVisible)
             //.DisposeWith(d);
 
-            //this.OneWayBind(ViewModel,
-            //        vm => vm.InfoLabel,
-            //        v => v.InfoLabel.Text)
-            //.DisposeWith(d);
+            this.OneWayBind(ViewModel,
+                    vm => vm.InfoLabel,
+                    v => v.InfoLabel.Text)
+            .DisposeWith(d);
 
             #endregion
 

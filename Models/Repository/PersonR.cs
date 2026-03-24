@@ -6,6 +6,7 @@ using Models.Projections;
 using Models.Tables;
 using System.Data;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace Models.Repository
 {
@@ -45,29 +46,57 @@ namespace Models.Repository
         
         public async Task<List<PersonMap>> Load(int id)
         {
-            IQueryable<Person> query = _ctx.People.AsNoTracking();
+            //IQueryable<Person> query = _ctx.People.AsNoTracking();
 
             if (id > 0)
-                query = query.Where(p => p.Id == id);
+                return await LoadPeople(x => x.Id == id);
             else
-                query = query.Where(p => p.Id > 0).Take(100);
-
-            return await query
-                    .SelectMany(
-                        person => person.Soci.DefaultIfEmpty(),
-                        (person, socio) => new { person, socio }
-                    )
-                    .SelectMany(
-                        combined => (combined.socio!.Tessere.DefaultIfEmpty()),
-
-                        (combined, tessera) => 
-                        PersonProjections.PeopleToPersonMap(combined.person, combined.socio, tessera))
-                    .Take(100)
-                    .ToListAsync();
-
-           
+                return await LoadPeople(p => p.Id > 0);
 
         }
+
+        public async Task<List<PersonMap>> LoadPeople(Expression<Func<Person, bool>> predicate)
+        {
+            return await _ctx.People
+                .AsNoTracking()
+                .Where(predicate) // Il filtro diventa dinamico
+                .SelectMany(
+                        person => person.Soci.DefaultIfEmpty(),
+                        (person, socio) => new { person, socio })
+                .SelectMany(
+                    combined => combined.socio!.Tessere.DefaultIfEmpty(),
+                    (combined, tessera) =>
+                        PersonProjections.PeopleToPersonMap(combined.person, combined.socio, tessera))
+                .Take(100)
+                .ToListAsync();
+        }
+
+        public async Task<List<PersonMap>> LoadByCognomeExact(string cognome) => 
+                   await LoadPeople(p => p.SurName == cognome);
+
+        public async Task<List<PersonMap>> LoadStartByCognome(string cognome) =>
+                   await LoadPeople(p => p.SurName.StartsWith(cognome));
+
+        public async Task<List<PersonMap>> LoadContainsCognome(string cognome) =>
+                   await LoadPeople(p => p.SurName.Contains(cognome));
+
+
+        public async Task<List<PersonMap>> LoadByNomeExact(string nome) =>
+                   await LoadPeople(p => p.FirstName == nome);
+       
+        public async Task<List<PersonMap>> LoadStartByNome(string nome) =>
+                   await LoadPeople(p => p.FirstName.StartsWith(nome));
+
+        public async Task<List<PersonMap>> LoadContainsNome(string nome) =>
+                   await LoadPeople(p => p.FirstName.Contains(nome));
+
+        public async Task<List<PersonMap>> LoadByNatoilExact(int natoil) =>
+                   await LoadPeople(p => p.Natoil == natoil);
+        public async Task<List<PersonMap>> LoadMinorNato(int natoil) =>
+                   await LoadPeople(p => p.Natoil <= natoil);
+        public async Task<List<PersonMap>> LoadMaiorNato(int natoil) =>
+                   await LoadPeople(p => p.Natoil >= natoil);
+
 
         public async Task<PersonMap> FirstPerson(int id)
         {
@@ -114,6 +143,16 @@ namespace Models.Repository
                 .AsNoTracking()
                 .Where(t => t.NumeroTessera == numeroTessera)
                 .Select(t => t.Socio!.PersonId)
+                .FirstOrDefaultAsync();
+            return result; // Se non trova nulla, ritorna 0 (default int)
+        }
+
+        public async Task<int> FirstIdPersonByNumeroSocio(string numeroSocio)
+        {
+            var result = await _ctx.Soci
+                .AsNoTracking()
+                .Where(s => s.NumeroSocio == numeroSocio)
+                .Select(s => s.PersonId)
                 .FirstOrDefaultAsync();
             return result; // Se non trova nulla, ritorna 0 (default int)
         }

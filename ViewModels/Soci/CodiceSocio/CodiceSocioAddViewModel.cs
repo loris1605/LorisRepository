@@ -3,8 +3,6 @@ using ReactiveUI;
 using SysNet;
 using SysNet.Converters;
 using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
 namespace ViewModels
@@ -25,19 +23,13 @@ namespace ViewModels
 
             Q = Create<PersonR>.Instance();
 
-            this.WhenActivated(d =>
-            {
-                OnNumeroSocioFocus().FireAndForget();
+            OnNumeroSocioFocus().FireAndForget();
 
-                Disposable.Create(() => {
-                    System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
-                }).DisposeWith(d);  
-            });
         }
 
         protected override void OnFinalDestruction()
         {
-            Q.Dispose();
+            Q?.Dispose();
             Q = null;
         }
 

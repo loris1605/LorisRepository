@@ -1,11 +1,6 @@
 ﻿using Models.Repository;
 using ReactiveUI;
 using SysNet;
-using SysNet.Converters;
-using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
 
 namespace ViewModels
 {
@@ -21,23 +16,13 @@ namespace ViewModels
             FieldsEnabled = false;
             FieldsVisibile = false; ;
             Q = Create<PersonR>.Instance();
-
-            
             SaveCommand = ReactiveCommand.CreateFromTask(OnSaving);
-
-            this.WhenActivated(d =>
-            {
-                OnEscFocus().FireAndForget();
-
-                Disposable.Create(() => {
-                    System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
-                }).DisposeWith(d);
-            });
+            
         }
 
         protected override void OnFinalDestruction()
         {
-            Q.Dispose();
+            Q?.Dispose();
             Q = null;
             DataSource = null;
         }
@@ -51,7 +36,7 @@ namespace ViewModels
                 FieldsEnabled = false;
             }
             
-            await OnEscFocus();
+            await OnFocus(EscFocus);
         }
 
         

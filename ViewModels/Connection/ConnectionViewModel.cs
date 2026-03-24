@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using ReactiveUI;
 using SysNet;
@@ -13,7 +12,6 @@ namespace ViewModels
 {
     public partial class ConnectionViewModel : BaseViewModel
     {
-        private static int classCount;
         #region Commands
 
         public ReactiveCommand<Unit, Unit> CheckCommand { get; }
@@ -23,11 +21,6 @@ namespace ViewModels
 
         public ConnectionViewModel(IScreen host) : base(host)
         {
-            System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                               $"#{Interlocked.Increment(ref classCount)} caricato *****");
-
-            base._deadEntries = classCount;
-
             CheckCommand = ReactiveCommand.CreateFromTask(OnCheckConnectionAsync);
             AvviaCommand = ReactiveCommand.Create(GoToLogin);
 

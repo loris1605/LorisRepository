@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:ViewModels"
+             xmlns:ui="using:ControlStyles"
+             xmlns:r="using:ReactiveUI.Avalonia"
+             KeyboardNavigation.TabNavigation="Cycle"
+             Background="LightSteelBlue"
+             x:DataType="vm:ConfigurazioneViewModel"
+             x:Class="Leonardo.ConfigurazioneView">
+
+    <Grid >
+    
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#2C3E50" Height="80" Padding="20,0">
+        
+            <Grid ColumnDefinitions="*, Auto">
+            
+                <ui:UiTitolo Text="CONFIGURAZIONE"
+                             x:Name="lblTitolo"/>
+
+                <ui:UiButton x:Name="EsciButton"
+                             HorizontalAlignment="Right"
+                             Grid.Column="1">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Image Source="avares://ControlStyles/Resources/ExitIcon.png" 
+                               Width="44" Height="44" />
+                        <TextBlock Text="Esci" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ui:UiButton>
+            
+            </Grid>
+        
+        </Border>
+
+        <Grid x:Name="MainGrid"
+              ColumnDefinitions="2*,3*"
+              Grid.Row="1"
+              Margin="50">
+			
+            <r:RoutedViewHost x:Name="RouterHost" 
+                              Router="{Binding ConfigurazioneRouter}">
+    
+                <r:RoutedViewHost.PageTransition>
+        <!-- Durata di 0.5 secondi -->
+                <CrossFade Duration="0:0:0.5" />
+                </r:RoutedViewHost.PageTransition>
+    
+            </r:RoutedViewHost>
+
+            <Viewbox Grid.Column="1">
+                <Border BorderThickness="1">
+                    <r:RoutedViewHost x:Name="InputRouterHost" 
+                                      Router="{Binding ConfigurazioneInputRouter}">
+        
+                        <r:RoutedViewHost.PageTransition>
+            <!--     Durata di 0.5 secondi -->
+                        <CrossFade Duration="0:0:0.5" />
+                    </r:RoutedViewHost.PageTransition>
+        
+                    </r:RoutedViewHost>
+                </Border>
+            </Viewbox>
+
+        </Grid>
+    
+    </Grid>
+  
+</UserControl>

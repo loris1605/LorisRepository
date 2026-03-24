@@ -103,7 +103,7 @@ namespace Models.Repository
                 {
                     foreach (var settore in postazione.SETTORI)
                     {
-                        settore.TARIFFE = await SelectTariffeX(settore.CODICESETTORE) ?? new List<TariffaXC>();
+                        settore.TARIFFE = await SelectTariffeX(settore.CODICESETTORE) ?? [];
                     }
                 }
             }

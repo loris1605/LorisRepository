@@ -1,11 +1,6 @@
 ﻿using Models.Repository;
-using Models.Tables;
 using ReactiveUI;
 using SysNet;
-using SysNet.Converters;
-using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Disposables.Fluent;
 
 namespace ViewModels
 {
@@ -28,19 +23,11 @@ namespace ViewModels
             FieldsEnabled = true;
             Q = Create<PersonR>.Instance();
 
-            this.WhenActivated(d =>
-            {
-                OnNumeroTesseraFocus().FireAndForget();
-
-                Disposable.Create(() => {
-                    System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
-                }).DisposeWith(d);
-            });
         }
 
         protected override void OnFinalDestruction()
         {
-            Q.Dispose();
+            Q?.Dispose();
             Q = null;
         }
 

@@ -1,6 +1,5 @@
 ﻿using ReactiveUI;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 namespace ViewModels
@@ -18,48 +17,18 @@ namespace ViewModels
 
         public Interaction<Unit, Unit> EscFocus { get; } = new();
 
-        private static int classCount;
-
+        
         public InputViewModel(IScreen host) : base(host)
         {
-            System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                               $"#{Interlocked.Increment(ref classCount)} caricato *****");
-
-            base._deadEntries = classCount;
-
-            EscPressedCommand = ReactiveCommand.Create(OnBackEsc);
+           
             SaveCommand = ReactiveCommand.CreateFromTask(OnSaving);
-            
         }
 
         protected override Task OnLoading()
         {
             return Task.CompletedTask;
         }
-
-        private void OnBackEsc()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                RxApp.MainThreadScheduler.Schedule(() => {
-                    sociHost.SociInputRouter.NavigationStack.Clear();
-                    sociHost.GroupEnabled = true;
-                });
-            }
-
-        }
-
-        protected void OnBack(int value = 0)
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                // Svuota completamente lo stack del router di input
-                sociHost.SociInputRouter.NavigateBack.Execute();
-                sociHost.SociInputRouter.NavigationStack.Clear();
-                sociHost.AggiornaGrid(value);
-                sociHost.GroupEnabled = true;
-            }
-        }
+        
 
         protected abstract Task OnSaving();
 

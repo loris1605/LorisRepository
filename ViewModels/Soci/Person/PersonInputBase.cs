@@ -1,8 +1,9 @@
 ﻿using Models.Entity;
 using ReactiveUI;
-using SysNet.Converters;
 using SysNet;
+using SysNet.Converters;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
@@ -11,6 +12,7 @@ namespace ViewModels
     public partial  class PersonInputBase : InputViewModel
     {
         protected int CodicePerson => BindingT is null ? 0 : BindingT.Id;
+        protected int Natoil => BindingT is null ? 0 : BindingT.Natoil;
 
         protected int CodiceSocio => BindingT is null ? 0 : BindingT.CodiceSocio;
         protected int CodiceTessera => BindingT is null ? 0 : BindingT.CodiceTessera;
@@ -25,11 +27,13 @@ namespace ViewModels
         protected string GetNumeroTessera => NumeroTessera;
         protected string GetNumeroSocio => BindingT.NumeroSocio;
         protected int GetCodicePerson => CodicePerson;
+        
 
         
         public PersonInputBase(IScreen host) : base(host)
         {
-            
+
+            EscPressedCommand = ReactiveCommand.Create(OnBackEsc);
 
             this.WhenActivated(d =>
             {
@@ -98,6 +102,45 @@ namespace ViewModels
 
             InfoLabel = ""; // Pulisce eventuali errori precedenti
             return true;
+        }
+
+        protected async Task OnFocus(Interaction<Unit, Unit> control)
+        {
+            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
+            await Task.Delay(200);
+
+            try
+            {
+                await control.Handle(Unit.Default);
+            }
+            catch (Exception ex)
+            {
+                // Evita crash se l'handler non è ancora pronto o la vista è già chiusa
+                System.Diagnostics.Debug.WriteLine("Interaction Focus fallita: " + ex.Message);
+            }
+        }
+
+        private void OnBackEsc()
+        {
+            if (HostScreen is ISociScreen sociHost)
+            {
+                RxApp.MainThreadScheduler.Schedule(() => {
+                    sociHost.SociInputRouter.NavigationStack.Clear();
+                    sociHost.GroupEnabled = true;
+                });
+            }
+        }
+
+        protected void OnBack(int value = 0)
+        {
+            if (HostScreen is ISociScreen sociHost)
+            {
+                // Svuota completamente lo stack del router di input
+                sociHost.SociInputRouter.NavigateBack.Execute();
+                sociHost.SociInputRouter.NavigationStack.Clear();
+                sociHost.AggiornaGrid(value);
+                sociHost.GroupEnabled = true;
+            }
         }
     }
 

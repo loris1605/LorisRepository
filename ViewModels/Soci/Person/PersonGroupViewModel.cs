@@ -2,7 +2,6 @@
 using Models.Repository;
 using ReactiveUI;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
@@ -31,10 +30,10 @@ namespace ViewModels
             
             this.WhenActivated(d =>
             {
-                this.WhenAnyValue(x => x.GroupBindingT)
-                    .Select(selection => selection != null)
-                    .BindTo(this, x => x.EnabledButton)
-                    .DisposeWith(d); // Usa l'activator della base
+                //this.WhenAnyValue(x => x.GroupBindingT)
+                //    .Select(selection => selection != null)
+                //    .BindTo(this, x => x.EnabledButton)
+                //    .DisposeWith(d); // Usa l'activator della base
 
                 var canPersonDel = this.WhenAnyValue(
                             x => x.GroupBindingT.CodiceSocio,
@@ -72,10 +71,7 @@ namespace ViewModels
                 UpdTesseraCommand = ReactiveCommand.CreateFromTask(OnUpdTessera, canTesseraDel)
                 .DisposeWith(d);
 
-                Disposable.Create(() =>
-                {
-                    System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
-                }).DisposeWith(d);
+                
             });
 
         }
@@ -91,7 +87,7 @@ namespace ViewModels
         public string NumeroSocio => BindingT is null ? "" : BindingT.NumeroSocio;
         public string NumeroTessera => BindingT is null ? "" : BindingT.NumeroTessera;
 
-        public RoutingState Router => throw new NotImplementedException();
+        
 
         protected override async Task OnAdding()
         {

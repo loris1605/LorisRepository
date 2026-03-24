@@ -18,6 +18,7 @@ namespace ViewModels
         int Param2 { get; set; }
 
         Task CaricaDataSource(int id = 0);
+        Task CaricaByModel(object model);
 
     }
 
@@ -26,8 +27,6 @@ namespace ViewModels
     public abstract partial class GroupViewModel<T, W> : BaseViewModel, IGroupViewModelBase
                                            where T : class where W : class, IGroupQ<T>
     {
-        private static int classCount;
-
         public IGroupQ<T> Q { get; set; }
 
         public virtual int Param1 { get; set;}
@@ -37,12 +36,9 @@ namespace ViewModels
 
         public GroupViewModel(IScreen host) : base(host)
         {
-            System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                               $"#{Interlocked.Increment(ref classCount)} caricato *****");
-
-            base._deadEntries = classCount;
-
             AddCommand = ReactiveCommand.CreateFromTask(OnAdding);
+
+            Q = Create<W>.Instance();
 
             this.WhenActivated(d =>
             {
@@ -60,13 +56,20 @@ namespace ViewModels
                     })
                     .DisposeWith(d);
 
+                
             });
+        }
+
+        protected override void OnFinalDestruction()
+        {
+            Q?.Dispose();
+            Q = null;
+            base.OnFinalDestruction();
         }
         
         protected async override Task OnLoading()
         {
-            Q = Create<W>.Instance();
-
+  
             try
             {
                 // 2. Caricamento dati (assicurati che CaricaDataSource sia atteso)

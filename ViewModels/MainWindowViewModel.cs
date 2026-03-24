@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models.Context;
+using Models.Repository;
 using ReactiveUI;
 using SysNet;
 using System.Diagnostics;
 using System.Reactive.Disposables;
-using System.Threading.Tasks;
 
 namespace ViewModels
 {
@@ -14,6 +14,8 @@ namespace ViewModels
                                                IActivatableViewModel
                                                 
     {
+        int currentVersion = 2; // Versione attuale del database, da aggiornare quando si modificano le entità
+        
         public RoutingState Router { get; } = new RoutingState();
         public string UrlPathSegment => "main";
         public IScreen HostScreen => this;
@@ -35,7 +37,9 @@ namespace ViewModels
 
             if (Flags.ServerAttivo)
             {
-                await VerificaNecessitaAggiornamento();
+                SettingR r = new();
+                if (!await r.CheckAppVersion(currentVersion))
+                    await VerificaNecessitaAggiornamento();
                 GoToLogin();
             }
             else

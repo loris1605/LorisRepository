@@ -1,12 +1,8 @@
 ﻿using Models.Repository;
 using ReactiveUI;
-using SysNet.Converters;
 using SysNet;
 using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 
 namespace ViewModels
 {
@@ -23,18 +19,8 @@ namespace ViewModels
             FieldsEnabled = true;
 
             Q = Create<PersonR>.Instance();
-
-            this.WhenActivated(d =>
-            {
-                OnCognomeFocus().FireAndForget();
-
-                Disposable.Create(() => {
-                    System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
-                }).DisposeWith(d);
-
-            });
+            
         }
-
 
         protected override void OnFinalDestruction()
         {
@@ -46,15 +32,7 @@ namespace ViewModels
 
         protected override async Task OnLoading()
         {
-            await OnCognomeFocus();
-        }
-
-        private async Task OnCognomeFocus()
-        {
-            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
-            await Task.Delay(200);
-            await CognomeFocus.Handle(Unit.Default).ToTask();
-            
+            await OnFocus(CognomeFocus);
         }
 
         protected async override Task OnSaving()

@@ -1,18 +1,14 @@
-﻿using Models;
-using Models.Entity;
+﻿using Models.Entity;
 using Models.Entity.Global;
 using Models.Repository;
 using ReactiveUI;
-using SysNet;
 using System.Reactive;
 
 namespace ViewModels
 {
     public partial class MenuViewModel : BaseViewModel
     {
-        private static int classCount;
         private MenuR Q { get; set; }
-        private readonly ServiceM service = Create<ServiceM>.Instance();
         
         public ReactiveCommand<string, Unit> NavigateCommand { get; }
         public ReactiveCommand<string, Unit> CassaCommand { get; }
@@ -20,11 +16,6 @@ namespace ViewModels
        
         public MenuViewModel(IScreen host) : base(host)
         {
-            System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                               $"#{Interlocked.Increment(ref classCount)} caricato *****");
-            
-            base._deadEntries = classCount;
-            
             NavigateCommand = ReactiveCommand.Create<string>(param =>
             {
                 //if (param == null)
@@ -38,7 +29,7 @@ namespace ViewModels
                     "Login" => new LoginViewModel(HostScreen),
                     "Connection" => new ConnectionViewModel(HostScreen),
                     "Soci" => new SociViewModel(HostScreen),
-                    //"Configurazione" => null,
+                    "Configurazione" => new ConfigurazioneViewModel(HostScreen),
                     //"Servizi" => null,
                     //"Gestore" => null,
                     //"OpenPostazioneCassa" => null,
@@ -61,7 +52,7 @@ namespace ViewModels
 
         protected override void OnFinalDestruction()
         {
-            Q.Dispose();
+            Q?.Dispose();
             Q = null;
             base.OnFinalDestruction();
         }

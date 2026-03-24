@@ -2,6 +2,7 @@
 using ReactiveUI;
 using SysNet;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -21,6 +22,8 @@ namespace ViewModels
 
         public CodiceSocioInputBase(IScreen host) : base(host)
         {
+            EscPressedCommand = ReactiveCommand.Create(OnBackEsc);
+
             this.WhenActivated(d =>
             {
                 this.WhenAnyValue(x => x.NumeroSocio)
@@ -42,6 +45,29 @@ namespace ViewModels
             // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
             await Task.Delay(200);
             await NumeroSocioFocus.Handle(Unit.Default).ToTask();
+        }
+
+        private void OnBackEsc()
+        {
+            if (HostScreen is ISociScreen sociHost)
+            {
+                RxApp.MainThreadScheduler.Schedule(() => {
+                    sociHost.SociInputRouter.NavigationStack.Clear();
+                    sociHost.GroupEnabled = true;
+                });
+            }
+        }
+
+        protected void OnBack(int value = 0)
+        {
+            if (HostScreen is ISociScreen sociHost)
+            {
+                // Svuota completamente lo stack del router di input
+                sociHost.SociInputRouter.NavigateBack.Execute();
+                sociHost.SociInputRouter.NavigationStack.Clear();
+                sociHost.AggiornaGrid(value);
+                sociHost.GroupEnabled = true;
+            }
         }
 
 

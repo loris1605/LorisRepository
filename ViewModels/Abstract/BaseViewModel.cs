@@ -30,6 +30,7 @@ namespace ViewModels
 
         public BaseViewModel(IScreen hostScreen, string urlPathSegment = null)
         {
+            Debug.WriteLine($"***** [VM] {this.GetType().Name} {this.GetHashCode()} caricato *****");
 
             HostScreen = hostScreen;
             UrlPathSegment = urlPathSegment ?? this.GetType().Name;
@@ -68,8 +69,7 @@ namespace ViewModels
 
                     OnFinalDestruction();
 #if DEBUG
-                    System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                                       $"#{_deadEntries} disposed *****");
+                    Debug.WriteLine($"***** [VM] {this.GetType().Name} {this.GetHashCode()} disposed *****");
 #endif
                 }).DisposeWith(disposables);
             });
@@ -79,16 +79,15 @@ namespace ViewModels
         protected virtual void OnFinalDestruction()
         {
             // Questo log conferma che la LOGICA di rimozione ha funzionato
-            Debug.WriteLine($"[BASE] {this.GetType().Name}  " +
-                            $"#{_deadEntries} rimosso correttamente dallo stack *****");
+            Debug.WriteLine($"***** [VM] {this.GetType().Name} {this.GetHashCode()}  +" +
+                            $"rimosso correttamente dallo stack *****");
         }
 
 #if DEBUG
         ~BaseViewModel()
         {
             // Questo apparirà nella finestra "Output" di Visual Studio
-            Debug.WriteLine($"***** [GC] {this.GetType().Name} " +
-                            $"#{_deadEntries} DISTRUTTO *****");
+            Debug.WriteLine($"***** [GC] {this.GetType().Name} {this.GetHashCode()} DISTRUTTO *****");
         }
 #endif
 

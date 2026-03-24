@@ -11,8 +11,6 @@ namespace ViewModels
 {
     public partial class LoginViewModel : BaseViewModel
     {
-        private static int classCount;
-
         private LoginR Q;
 
         public ReactiveCommand<Unit, Unit> EntraCommand { get; }
@@ -22,11 +20,6 @@ namespace ViewModels
 
         public LoginViewModel(IScreen host) : base(host)
         {
-            System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                               $"#{Interlocked.Increment(ref classCount)} caricato *****");
-
-            base._deadEntries = classCount;
-
             EntraCommand = ReactiveCommand.CreateFromTask(OnEntra);
            
             this.WhenActivated(d =>
@@ -45,12 +38,13 @@ namespace ViewModels
         
         protected override void OnFinalDestruction()
         {
-            Q.Dispose();
+            Q?.Dispose();
             Q = null;
             DataSource = null;
             BindingT = null;
             base.OnFinalDestruction();
         }
+
         protected override async Task OnLoading()
         {
          

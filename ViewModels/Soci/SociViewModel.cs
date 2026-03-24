@@ -1,9 +1,5 @@
-﻿using Models;
-using ReactiveUI;
-using SysNet;
+﻿using ReactiveUI;
 using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
 namespace ViewModels
@@ -19,41 +15,22 @@ namespace ViewModels
     }
     public partial class SociViewModel : BaseViewModel, ISociScreen
     {
-        private static int classCount;
-
         public RoutingState SociRouter { get; } = new RoutingState();
         public RoutingState SociInputRouter { get; } = new RoutingState();
         public RoutingState Router => SociRouter;
 
-        private readonly ServiceM service = Create<ServiceM>.Instance();
-               
         public ReactiveCommand<Unit, IRoutableViewModel> EsciCommand { get; }
           
 
         public SociViewModel(IScreen host) : base(host)
         {
-            System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                               $"#{Interlocked.Increment(ref classCount)} " +
-                                               $"caricato *****");
-
-            base._deadEntries = classCount;
-
             EsciCommand = ReactiveCommand.CreateFromObservable(() =>
                         HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen)));
-
-            //this.WhenActivated(d =>
-            //{
-
-            //    Disposable.Create(() => {
-            //        System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
-            //    }).DisposeWith(d);
-
-            //});
+            
         }
 
         protected override void OnFinalDestruction()
         {
-            //Q?.Dispose();
             SociRouter.NavigationStack.Clear();
             SociInputRouter.NavigationStack.Clear();
         }
@@ -61,14 +38,20 @@ namespace ViewModels
         protected override async Task OnLoading()
         {
             await SociRouter.NavigateAndReset.Execute(new PersonGroupViewModel(this));
-                
         }
 
         
 
         public void AggiornaGrid(object model)
         {
-            //SociRouter.NavigateAndReset.Execute(new PersonGroupViewModel(this, model));
+            if (SociRouter.GetCurrentViewModel() is IGroupViewModelBase groupVm)
+            {
+                // Passiamo l'ID al metodo di caricamento della lista
+                groupVm.CaricaByModel(model);
+
+                // Se hai un comando di ricarica nel GroupViewModel:
+                // groupVm.LoadCommand.Execute().Subscribe();
+            }
         }
 
         public void AggiornaGrid(int id)

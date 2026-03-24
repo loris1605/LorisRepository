@@ -69,11 +69,11 @@ namespace Models.Context
             modelBuilder.Entity<Person>().Property(p => p.SurName).HasMaxLength(50);
             modelBuilder.Entity<Person>().Property(p => p.UniqueParam).HasMaxLength(14);
 
-            //Relazione con Operatore
-            modelBuilder.Entity<Person>()
-                        .HasOne(p => p.Operatore)
-                        .WithOne(s => s.Person)
-                        .HasForeignKey<Operatore>(v => v.PersonId);
+            ////Relazione con Operatore
+            //modelBuilder.Entity<Person>()
+            //            .HasOne(p => p.Operatore)
+            //            .WithOne(s => s.Person)
+            //            .HasForeignKey<Operatore>(v => v.PersonId);
 
             modelBuilder.Entity<Person>().HasData(
                     new Person { 
@@ -120,7 +120,15 @@ namespace Models.Context
                 .HasIndex(p => p.NumeroSocio)
                 .IsUnique();
 
-            
+            modelBuilder.Entity<Person>()
+                .HasIndex(p => p.SurName)
+                .HasDatabaseName("IX_Person_SurName"); // Opzionale: dà un nome specifico all'indice
+
+            modelBuilder.Entity<Person>()
+                .HasIndex(p => p.FirstName)
+                .HasDatabaseName("IX_Person_FirstName"); // Opzionale: dà un nome specifico all'indice
+
+
         }
         private static void TessereConfig(ModelBuilder modelBuilder)
         {

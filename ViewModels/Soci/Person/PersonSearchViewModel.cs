@@ -1,13 +1,10 @@
-﻿using Models.Repository;
+﻿using Models.Entity;
+using Models.Repository;
 using ReactiveUI;
 using SysNet;
 using SysNet.Converters;
-using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
-using System.Windows;
 
 namespace ViewModels
 {
@@ -22,31 +19,28 @@ namespace ViewModels
 
             this.WhenActivated(d =>
             {
-                OnCognomeFocus().FireAndForget();
+                OnFocus(CognomeFocus).FireAndForget();
 
                 this.WhenAnyValue(x => x.AnagraficaChecked)
                     .Where(value => value == true) // Filtra: procedi solo se è true
                     .ObserveOn(RxApp.MainThreadScheduler) // Assicurati di essere sul thread UI
-                    .Subscribe(_ => OnCognomeFocus().FireAndForget())
+                    .Subscribe(_ => OnFocus(CognomeFocus).FireAndForget())
                     .DisposeWith(d);
 
                 this.WhenAnyValue(x => x.SocioChecked)
                     .Where(value => value == true) // Filtra: procedi solo se è true
                     .ObserveOn(RxApp.MainThreadScheduler) // Assicurati di essere sul thread UI
-                    .Subscribe(_ => OnSocioFocus().FireAndForget())
+                    .Subscribe(_ => OnFocus(SocioFocus).FireAndForget())
                     .DisposeWith(d);
 
                 this.WhenAnyValue(x => x.TesseraChecked)
                     .Where(value => value == true) // Filtra: procedi solo se è true
                     .ObserveOn(RxApp.MainThreadScheduler) // Assicurati di essere sul thread UI
-                    .Subscribe(_ => OnTesseraFocus().FireAndForget())
+                    .Subscribe(_ => OnFocus(TesseraFocus).FireAndForget())
                     .DisposeWith(d);
 
 
-                Disposable.Create(() =>
-                {
-                    System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} disposed *****");
-                }).DisposeWith(d);
+                
 
             });
         }
@@ -61,7 +55,7 @@ namespace ViewModels
         {
             ResetAllCombos();
             AnagraficaChecked = true;
-            await OnCognomeFocus();
+            await OnFocus(CognomeFocus);
         }
 
         protected async override Task OnSaving()
@@ -75,10 +69,26 @@ namespace ViewModels
                 else
                 {
                     InfoLabel = "Nessuna persona trovata";
-                    OnTesseraFocus().FireAndForget();
+                    OnFocus(TesseraFocus).FireAndForget();
                 }
                 return;
             }
+
+            // se il numero socio è diverso da zero esegue la ricerca solo sul socio
+            if (SocioChecked && GetNumeroSocio != "")
+            {
+                int personid = await Q.FirstIdPersonByNumeroSocio(NumeroSocio);
+
+                if (personid != 0) { OnBack(personid); }
+                else
+                {
+                    InfoLabel = "Nessuna persona trovata";
+                    OnFocus(SocioFocus).FireAndForget();
+                }
+                return;
+            }
+
+            await StartSearch(CognomeSelectedValue, NomeSelectedValue, NatoilSelectedValue);
         }
 
         void ResetAllCombos()
@@ -88,36 +98,133 @@ namespace ViewModels
             NatoilSelectedValue = 0;
         }
 
-        private async Task OnCognomeFocus()
+        private async Task StartSearch(int cognomeFlag, int nomeFlag, int natoilFlag)
         {
-            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
-            await Task.Delay(200);
-            await CognomeFocus.Handle(Unit.Default).ToTask();
+            //1.Caricamento iniziale dei dati(scegli la query più restrittiva per performance)
+            if (cognomeFlag > 0)
+            {
+                if (cognomeFlag == 1)
+                    DataSource = await Q.LoadByCognomeExact(Cognome);
+                else if (cognomeFlag == 2)
+                    DataSource = await Q.LoadStartByCognome(Cognome);
+                else
+                    DataSource = await Q.LoadContainsCognome(Cognome);
+
+                if (DataSource == null || DataSource.Count == 0)
+                {
+                    InfoLabel = "Nessuna persona trovata";
+                    await OnFocus(CognomeFocus);
+                    return;
+                }
+
+                //dopo il nome
+                EstractNome();
+
+                if (DataSource == null || DataSource.Count == 0)
+                {
+                    InfoLabel = "Nessuna persona trovata";
+                    await OnFocus(NomeFocus);
+                    return;
+                }
+
+                //dopo la data di nascita
+                EstractNatoil();
+
+            }
+
+            else if (nomeFlag > 0)
+            {
+                if (nomeFlag == 1)
+                    DataSource = await Q.LoadByNomeExact(Nome);
+                else if (nomeFlag == 2)
+                    DataSource = await Q.LoadStartByNome(Nome);
+                else
+                    DataSource = await Q.LoadContainsNome(Nome);
+
+                if (DataSource == null || DataSource.Count == 0)
+                {
+                    InfoLabel = "Nessuna persona trovata";
+                    await OnFocus(NomeFocus);
+                    return;
+                }
+
+                //dopo la data di nascita
+                EstractNatoil();
+
+            }
+
+            else if (natoilFlag > 0)
+            {
+                if (natoilFlag == 1)
+                    DataSource = await Q.LoadByNatoilExact(Natoil);
+                else if (natoilFlag == 2)
+                    DataSource = await Q.LoadMinorNato(Natoil);
+                else
+                    DataSource = await Q.LoadMaiorNato(Natoil);
+            }
+
+            if (DataSource == null || DataSource.Count == 0)
+            {
+                InfoLabel = "Nessuna persona trovata";
+                await OnFocus(CognomeFocus);
+                return;
+            }
+
+            OnBackFiltered();
+
 
         }
-        private async Task OnNomeFocus()
-        {
-            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
-            await Task.Delay(200);
-            await NomeFocus.Handle(Unit.Default).ToTask();
 
+        private void Estract(System.Func<PersonMap, bool> condition)
+        {
+            try { DataSource = [.. DataSource.Where(condition)]; } catch (Exception) { DataSource = null; }
         }
 
-        private async Task OnSocioFocus()
+        private void EstractNome()
         {
-            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
-            await Task.Delay(200);
-            await SocioFocus.Handle(Unit.Default).ToTask();
-
+            if (NomeSelectedValue == 1) // uguale a
+            {
+                Estract(x => x.Nome.Equals(Nome, StringComparison.CurrentCultureIgnoreCase));
+            }
+            else if (NomeSelectedValue == 2) // inizia con
+            {
+                Estract(x => x.Nome.StartsWith(Nome, StringComparison.CurrentCultureIgnoreCase));
+            }
+            else if (NomeSelectedValue == 3) // che contiene
+            {
+                Estract(x => x.Nome.Contains(Nome, StringComparison.CurrentCultureIgnoreCase));
+            }
         }
 
-        private async Task OnTesseraFocus()
+        private void EstractNatoil()
         {
-            // Fondamentale: aspetta un attimo che la View sia "viva" e l'handler registrato
-            await Task.Delay(200);
-            await TesseraFocus.Handle(Unit.Default).ToTask();
-
+            if (NatoilSelectedValue == 1) // uguale a
+            {
+                Estract(x => x.Natoil == Natoil);
+            }
+            else if (NatoilSelectedValue == 2) // prima di
+            {
+                Estract(x => x.Natoil <= Natoil);
+            }
+            else if (NatoilSelectedValue == 3) // dopo di
+            {
+                Estract(x => x.Natoil >= Natoil);
+            }
         }
+
+        private void OnBackFiltered()
+        {
+            if (HostScreen is ISociScreen sociHost)
+            {
+                // Svuota completamente lo stack del router di input
+                sociHost.SociInputRouter.NavigateBack.Execute();
+                sociHost.SociInputRouter.NavigationStack.Clear();
+                sociHost.AggiornaGrid(DataSource);
+                sociHost.GroupEnabled = true;
+            }
+        }
+
+
 
         private void OnRicerca()
         {
