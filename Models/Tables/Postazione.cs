@@ -1,6 +1,6 @@
 ﻿namespace Models.Tables
 {
-    public class Postazione
+    public class Postazione : IStandardTable
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;

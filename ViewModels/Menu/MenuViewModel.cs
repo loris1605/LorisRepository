@@ -3,6 +3,7 @@ using Models.Entity.Global;
 using Models.Repository;
 using ReactiveUI;
 using System.Reactive;
+using System.Reactive.Disposables.Fluent;
 
 namespace ViewModels
 {
@@ -12,8 +13,9 @@ namespace ViewModels
         
         public ReactiveCommand<string, Unit> NavigateCommand { get; }
         public ReactiveCommand<string, Unit> CassaCommand { get; }
+        public ReactiveCommand<Unit, Unit> LogoutCommand { get; }
 
-       
+        
         public MenuViewModel(IScreen host) : base(host)
         {
             NavigateCommand = ReactiveCommand.Create<string>(param =>
@@ -26,7 +28,6 @@ namespace ViewModels
                 IRoutableViewModel CurrentPage = param switch
                 {
 
-                    "Login" => new LoginViewModel(HostScreen),
                     "Connection" => new ConnectionViewModel(HostScreen),
                     "Soci" => new SociViewModel(HostScreen),
                     "Configurazione" => new ConfigurazioneViewModel(HostScreen),
@@ -45,9 +46,15 @@ namespace ViewModels
                 }
 
             });
-
             CassaCommand = ReactiveCommand.Create<string>(param => OnCassa(param));
+            LogoutCommand = ReactiveCommand.Create(OnLogout);
 
+            this.WhenActivated(d => 
+            {
+                LogoutCommand.DisposeWith(d);
+                
+            });
+                
         }
 
         protected override void OnFinalDestruction()
@@ -135,6 +142,11 @@ namespace ViewModels
             };
             //MessageBox.Show(x);
             //MainNavigator.NotifyColleagues("CassaBase");
+        }
+
+        private void OnLogout()
+        {
+            HostScreen.Router.NavigateAndReset.Execute(new LoginViewModel(HostScreen));
         }
 
 

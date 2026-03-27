@@ -26,9 +26,6 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
             }
 
 
-            // Esc Key Pressed
-
-
             // Enter Key Pressed
 
             #region TwoWay
@@ -72,25 +69,20 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
                 v => v.UpdButton)
                 .DisposeWith(d);
 
-            //this.BindCommand(ViewModel,
-            //    vm => vm.PersonDelCommand,
-            //    v => v.DelButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.PersonSearchCommand,
-            //    v => v.FilterButton)
-            //    .DisposeWith(d);
+            this.BindCommand(ViewModel,
+                vm => vm.DelCommand,
+                v => v.DelButton)
+                .DisposeWith(d);
 
             this.BindCommand(ViewModel,
                 vm => vm.FilterCommand,
                 v => v.CancelFilterButton)
                 .DisposeWith(d);
 
-            //this.BindCommand(ViewModel,
-            //    vm => vm.AddCodiceSocioCommand,
-            //    v => v.AddSocioButton)
-            //    .DisposeWith(d);
+            this.BindCommand(ViewModel,
+                vm => vm.PostazioniCommand,
+                v => v.PostazioniButton)
+                .DisposeWith(d);
 
             //this.BindCommand(ViewModel,
             //    vm => vm.DelCodiceSocioCommand,

@@ -5,6 +5,7 @@ using SysNet;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
@@ -24,23 +25,23 @@ namespace ViewModels
             CheckCommand = ReactiveCommand.CreateFromTask(OnCheckConnectionAsync);
             AvviaCommand = ReactiveCommand.Create(GoToLogin);
 
-            
+
             this.WhenActivated(d =>
             {
-                this.WhenAnyValue(
-                x => x.DatabaseText,
-                x => x.PasswordText,
-                x => x.UserIdText,
-                x => x.SelectedInstance,
-                (db, pass, user, server) =>
-                    !string.IsNullOrWhiteSpace(db) &&
-                    !string.IsNullOrWhiteSpace(pass) &&
-                    !string.IsNullOrWhiteSpace(user) &&
-                    !string.IsNullOrWhiteSpace(server))
-                .Subscribe(value => EnabledCheck = value)
-                .DisposeWith(d);
-                
-            });
+            this.WhenAnyValue(
+            x => x.DatabaseText,
+            x => x.PasswordText,
+            x => x.UserIdText,
+            x => x.SelectedInstance,
+            (db, pass, user, server) =>
+                !string.IsNullOrWhiteSpace(db) &&
+                !string.IsNullOrWhiteSpace(pass) &&
+                !string.IsNullOrWhiteSpace(user) &&
+                !string.IsNullOrWhiteSpace(server))
+            .Subscribe(value => EnabledCheck = value)
+            .DisposeWith(d);
+            
+        });
 
         }
 
@@ -54,22 +55,11 @@ namespace ViewModels
             try
             {
                 var connectionString =
-                    $"Server={SelectedInstance};" +
-                    $"Database={DatabaseText};" +
-                    $"User Id={UserIdText};" +
-                    $"Password={PasswordText};" +
-                    "TrustServerCertificate=true;";
-
-                //await using var connection = new SqlConnection(connectionString);
-                //await connection.OpenAsync();
-
-                //const string query =
-                //    "SELECT database_id FROM sys.databases WHERE Name = @dbName";
-
-                //await using var cmd = new SqlCommand(query, connection);
-                //cmd.Parameters.AddWithValue("@dbName", DatabaseText);
-
-                //var result = await cmd.ExecuteScalarAsync();
+                    $"Server={SelectedInstance?.Trim()};" +
+                    $"Database={DatabaseText?.Trim()};" +
+                    $"User Id={UserIdText?.Trim()};" +
+                    $"Password={PasswordText};" + // La password non va trimmata!
+                    "TrustServerCertificate=true;Connect Timeout=5;";
 
                 Connection.SetConnectionString(connectionString);
                 
@@ -124,17 +114,35 @@ namespace ViewModels
         protected override async Task OnLoading()
         {
             IsLoading = true;
-            var instances = await Task.Run(SqlInstanceFinder.GetInstances) ?? new List<string>();
+            try
+            {
+                // Esegue la ricerca pesante in background
+                var instances = await Task.Run(() => SqlInstanceFinder.GetInstances())
+                                ?? new List<string>();
 
-            SqlInstances.Clear();
-            foreach (var i in instances)
-                SqlInstances.Add(i);
+                // Usiamo lo scheduler della UI per aggiornare la lista ed evitare crash
+                RxApp.MainThreadScheduler.Schedule(() =>
+                {
+                    SqlInstances.Clear();
+                    foreach (var i in instances)
+                    {
+                        SqlInstances.Add(i);
+                    }
 
-            if (SqlInstances.Count > 0) SelectedInstance = SqlInstances[0];
+                    if (SqlInstances.Any())
+                    {
+                        SelectedInstance = SqlInstances[0];
+                    }
+                });
+            }
+            finally
+            {
+                // Garantisce che IsLoading torni false anche in caso di errore
+                IsLoading = false;
 
-            IsLoading = false;
-
-            await UserIdFocus.Handle(Unit.Default);
+                // Sposta il focus dopo che la UI ha finito di renderizzare
+                await UserIdFocus.Handle(Unit.Default);
+            }
 
 
         }

@@ -8,5 +8,7 @@
         public string NomeTipoSettore { get; set; } = string.Empty;
         public bool HasPermesso { get; set; } = false;
 
+        public override string Nome => NomeSettore;
+
     }
 }

@@ -26,4 +26,8 @@
     <ProjectReference Include="..\SysNet\SysNet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
-﻿using Models.Repository;
+﻿using Models.Mappers;
+using Models.Repository;
 using Models.Tables;
 using ReactiveUI;
 using SysNet;
@@ -15,6 +16,7 @@ namespace ViewModels
             _idDaModificare = idoperatore;
 
             Titolo = "Modifica Operatore";
+            
             FieldsEnabled = true;
             
             Q = Create<OperatoreR>.Instance();
@@ -28,20 +30,27 @@ namespace ViewModels
 
         protected override async Task OnLoading()
         {
-            BindingT = await Q.FirstOperatore(_idDaModificare);
+            BindingT = await Q.GetById(_idDaModificare);
             if (BindingT == null)
             {
                 InfoLabel = "Errore: Operatore non trovato nel database.";
                 FieldsEnabled = false;
+                await OnFocus(NomeFocus);
+                return;
             }
-            await OnFocus(NomeFocus);
+            NomeOperatoreEnabled = _idDaModificare != -1;
+            if (NomeOperatoreEnabled)
+            {
+                await OnFocus(NomeFocus);
+            }
+            else await OnFocus(PasswordFocus);
         }
 
         protected override async Task OnSaving()
         {
             if (!await ValidaDati()) return;
 
-            if (await Q.EsisteNomeOperatoreUpd(BindingT))
+            if (await Q.EsisteNomeUpd(BindingT))
             {
                 InfoLabel = "Operatore già registrato";
                 return;

@@ -6,6 +6,7 @@
              xmlns:vm="using:ViewModels"
              xmlns:ui="using:ControlStyles"
              xmlns:r="using:ReactiveUI.Avalonia"
+             xmlns:lc="using:Leonardo"
              KeyboardNavigation.TabNavigation="Cycle"
              Background="LightSteelBlue"
              x:DataType="vm:ConfigurazioneViewModel"
@@ -18,27 +19,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#2C3E50" Height="80" Padding="20,0">
-        
-            <Grid ColumnDefinitions="*, Auto">
-            
-                <ui:UiTitolo Text="CONFIGURAZIONE"
-                             x:Name="lblTitolo"/>
-
-                <ui:UiButton x:Name="EsciButton"
-                             HorizontalAlignment="Right"
-                             Grid.Column="1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Image Source="avares://ControlStyles/Resources/ExitIcon.png" 
-                               Width="44" Height="44" />
-                        <TextBlock Text="Esci" VerticalAlignment="Center" />
-                    </StackPanel>
-                </ui:UiButton>
-            
-            </Grid>
-        
-        </Border>
-
+        <lc:TitleView TitoloPagina="CONFIGURAZIONE"
+                      x:Name="Title"
+                      ButtonText="Esci"/>
+       
         <Grid x:Name="MainGrid"
               ColumnDefinitions="2*,3*"
               Grid.Row="1"

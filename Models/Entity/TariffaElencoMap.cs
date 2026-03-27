@@ -7,6 +7,8 @@
         public decimal PrezzoTariffa { get; set; } = decimal.Zero;
         public bool IsFreeDrink { get; set; }
         public bool HasListino { get; set; }
-        
+
+        public override string Nome => NomeTariffa;
+
     }
 }

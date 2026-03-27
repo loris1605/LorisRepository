@@ -9,5 +9,7 @@
         public int CodiceTipoRientro { get; set; }
         public int OreDurataRientro { get; set; }
 
+        public override string Nome => NomePostazione;
+
     }
 }

@@ -122,20 +122,30 @@ namespace ViewModels
                     .Where(_ => BindingT != null)
                     .Subscribe(val => BindingT.Badge = val)
                     .DisposeWith(d);
+                this.WhenAnyValue(x => x.CodicePerson)
+                    .Where(_ => BindingT != null)
+                    .Subscribe(val => BindingT.CodicePerson = val)
+                    .DisposeWith(d);
                 this.WhenAnyValue(x => x.Abilitato)
                     .Select(val => val ? "Si" : "No") // Trasforma il bool in stringa
                     .Subscribe(text => AbilitatoText = text) // Assegna il risultato
                     .DisposeWith(d);
             });
         }
-
-        
+    
 
         private string nome = string.Empty;
         public string NomeOperatore
         {
             get => nome;
             set => this.RaiseAndSetIfChanged(ref nome, value);
+        }
+
+        private bool nomeoperatoreenabled = true;
+        public bool NomeOperatoreEnabled
+        {
+            get => nomeoperatoreenabled;
+            set => this.RaiseAndSetIfChanged(ref nomeoperatoreenabled, value);
         }
 
         private string password = string.Empty;
@@ -166,6 +176,13 @@ namespace ViewModels
             set => this.RaiseAndSetIfChanged(ref badge, value);
         }
 
+        private int _codiceperson = 0;
+        public int CodicePerson
+        {
+            get => _codiceperson;
+            set => this.RaiseAndSetIfChanged(ref _codiceperson, value);
+        }
+
         private OperatoreMap bindingt = Create<OperatoreMap>.Instance();
         public OperatoreMap BindingT
         {
@@ -182,6 +199,7 @@ namespace ViewModels
                     this.Password = value.Password ?? "";
                     this.Abilitato = value.Abilitato;
                     this.Badge = value.Badge;
+                    this.CodicePerson = value.CodicePerson;
                 }
             }
         }

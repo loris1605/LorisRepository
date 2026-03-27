@@ -5,9 +5,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="using:ViewModels"
              xmlns:ui="using:ControlStyles"
+             xmlns:lc="using:Leonardo"
              xmlns:material="using:Material.Icons.Avalonia"
              KeyboardNavigation.TabNavigation="Cycle"
              Background="#F3F3F3"
+
              x:DataType="vm:MenuViewModel"
              x:Class="Leonardo.MenuView">
 
@@ -29,30 +31,11 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions> -->  
 
-       <Border Grid.Row="0" Background="#2C3E50" Height="80" Padding="20,0">
-       
-           <Grid ColumnDefinitions="*, Auto">
-           
-                <ui:UiTitolo x:Name="lblTitolo" 
-                             Text="MENU PRINCIPALE" 
-                             Foreground="White"
-                             VerticalAlignment="Center"
-                             FontSize="24"/> 
-           
-                <ui:UiButton x:Name="LogoutButton"
-                             Grid.Column="1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Image Source="avares://ControlStyles/Resources/CredenzialiIcon.png" 
-                               Width="44" Height="44" />
-                        <TextBlock Text="Logout" VerticalAlignment="Center" />
-                    </StackPanel>
-                </ui:UiButton>
-           
-           </Grid>   
-       
-       </Border>
-    
-       <Border Grid.Row="1" Padding="30" VerticalAlignment="Top">
+        <lc:TitleView x:Name="Title"
+                      TitoloPagina="MENU PRINCIPALE"
+                      ButtonText="Logout"/>
+		    
+        <Border Grid.Row="1" Padding="30" VerticalAlignment="Top">
         
             <Viewbox >
         

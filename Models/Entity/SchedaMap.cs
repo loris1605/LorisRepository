@@ -9,7 +9,6 @@
         public string NumeroSocio { get; set; } = string.Empty;
         public int CodicePerson { get; set; }
         public string Cognome { get; set; } = string.Empty;
-        public string Nome { get; set; } = string.Empty;
         public int Natoil { get; set; }
         public DateTime CheckInTime { get; set; } = DateTime.Now;
         public bool Blocco { get; set; } = false;

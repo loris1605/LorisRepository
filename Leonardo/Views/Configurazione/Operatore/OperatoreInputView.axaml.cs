@@ -1,4 +1,5 @@
 using Avalonia.Input;
+using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using System;
@@ -27,14 +28,25 @@ public partial class OperatoreInputView : ReactiveUserControl<OperatoreInputBase
                         })
                         .DisposeWith(d);
 
-                //ViewModel?.PasswordFocus
-                //        .RegisterHandler(interaction =>
-                //        {
-                //            PasswordBox.Focus();
-                //            PasswordBox.SelectAll();
-                //            interaction.SetOutput(Unit.Default);
-                //        })
-                //        .DisposeWith(d);
+                ViewModel?.EscFocus
+                    .RegisterHandler(interaction =>
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            EsciButton.Focus();
+                        });
+                        interaction.SetOutput(Unit.Default);
+                    })
+                    .DisposeWith(d);
+
+                ViewModel?.PasswordFocus
+                        .RegisterHandler(interaction =>
+                        {
+                            PasswordBox.Focus();
+                            PasswordBox.SelectAll();
+                            interaction.SetOutput(Unit.Default);
+                        })
+                        .DisposeWith(d);
 
                 // Esc Key Pressed
                 Observable.FromEventPattern<EventHandler<KeyEventArgs>, KeyEventArgs>(
@@ -95,6 +107,17 @@ public partial class OperatoreInputView : ReactiveUserControl<OperatoreInputBase
                         v => v.InputGrid.IsEnabled)
                 .DisposeWith(d);
 
+                //Bind Enabled to NomeBox
+                this.OneWayBind(ViewModel,
+                          vm => vm.NomeOperatoreEnabled,
+                          v => v.NomeBox.IsVisible)
+                    .DisposeWith(d);
+
+                //Bind Enabled to NomeBox
+                this.OneWayBind(ViewModel,
+                          vm => vm.NomeOperatoreEnabled,
+                          v => v.AbilitatoCheckBox.IsVisible)
+                    .DisposeWith(d);
 
                 //this.OneWayBind(ViewModel,
                 //        vm => vm.FieldsVisibile,

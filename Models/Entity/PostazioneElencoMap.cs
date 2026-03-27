@@ -6,6 +6,8 @@
         public string NomePostazione { get; set; } = string.Empty;
         public string NomeTipoPostazione { get; set; } = string.Empty;
         public bool HasPermesso { get; set; }
+
+        public override string Nome => NomePostazione;
         
     }
 }

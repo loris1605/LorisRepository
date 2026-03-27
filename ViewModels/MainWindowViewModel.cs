@@ -4,7 +4,10 @@ using Models.Repository;
 using ReactiveUI;
 using SysNet;
 using System.Diagnostics;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
+using System.Reactive.Linq;
 
 namespace ViewModels
 {
@@ -25,54 +28,43 @@ namespace ViewModels
         public MainWindowViewModel()
         {
             // Spostiamo la logica di navigazione all'attivazione
-            this.WhenActivated(async (CompositeDisposable disposables) =>
+            this.WhenActivated(d =>
             {
-                await InitializeNavigation();
+                Observable.StartAsync(async () => await InitializeNavigation())
+                .Subscribe()
+                .DisposeWith(d);
             });
         }
 
         private async Task InitializeNavigation()
         {
-            Connection.TestConnection();
+            await Task.Run(() => Connection.TestConnection());
 
             if (Flags.ServerAttivo)
             {
                 SettingR r = new();
                 if (!await r.CheckAppVersion(currentVersion))
                     await VerificaNecessitaAggiornamento();
-                GoToLogin();
+                RxApp.MainThreadScheduler.Schedule(() => GoToLogin());
             }
             else
-                GoToConnection();
+                RxApp.MainThreadScheduler.Schedule(() => GoToConnection());
         }
 
-        public async Task VerificaNecessitaAggiornamento()
+        // Modificato in statico o assicurati che l'istanza di AppDbContext sia configurata correttamente
+        private async Task VerificaNecessitaAggiornamento()
         {
             using var _ctx = new AppDbContext();
 
-            // 1. Verifica se il database è raggiungibile
-            if (!await _ctx.Database.CanConnectAsync())
+            if (await _ctx.Database.CanConnectAsync())
             {
-                throw new Exception("Errore SQL: Impossibile connettersi al database. Controlla la stringa di connessione.");
-            }
-
-            // 2. Recupera le migrazioni non ancora applicate
-            var pendingMigrations = await _ctx.Database.GetPendingMigrationsAsync();
-
-            if (pendingMigrations.Any())
-            {
-                Debug.WriteLine("⚠️ Il database NECESSITA di un aggiornamento.");
-                Debug.WriteLine("Migrazioni mancanti:");
-                foreach (var m in pendingMigrations) Console.WriteLine($" - {m}");
-
-                await _ctx.Database.MigrateAsync();
-
-                // OPZIONALE: Scommenta la riga sotto per applicare gli aggiornamenti automaticamente
-                // await _ctx.Database.MigrateAsync(); 
-            }
-            else
-            {
-                Debug.WriteLine("✅ Il database è aggiornato all'ultima versione del modello.");
+                var pendingMigrations = await _ctx.Database.GetPendingMigrationsAsync();
+                if (pendingMigrations.Any())
+                {
+                    // Applica le migrazioni se necessario
+                    await _ctx.Database.MigrateAsync();
+                    Debug.WriteLine("✅ Database aggiornato con successo.");
+                }
             }
         }
 

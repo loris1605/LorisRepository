@@ -11,10 +11,9 @@ using System.Linq.Expressions;
 namespace Models.Repository
 {
     
-    public partial class PersonR : IDisposable, IGroupQ<PersonMap>
+    public partial class PersonR : IGroupQ<PersonMap>
     {
         private static int classCount;
-        private readonly PeopleDbContext _ctx;
 
         public PersonR() : base()
         {
@@ -22,7 +21,6 @@ namespace Models.Repository
                                                $"#{Interlocked.Increment(ref classCount)} " +
                                                $"caricato *****");
 
-            _ctx = new PeopleDbContext();
         }
 
 #if DEBUG
@@ -36,11 +34,9 @@ namespace Models.Repository
 
 #endif
 
-        public virtual void Dispose()
-        {
-            _ctx.Dispose();
-        }
-        
+        public void Dispose() { }
+
+                
         public Task<List<PersonMap>> LoadByModel(object model) => 
                 Task.FromResult((List<PersonMap>)model);
         
@@ -57,6 +53,7 @@ namespace Models.Repository
 
         public async Task<List<PersonMap>> LoadPeople(Expression<Func<Person, bool>> predicate)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.People
                 .AsNoTracking()
                 .Where(predicate) // Il filtro diventa dinamico
@@ -101,6 +98,7 @@ namespace Models.Repository
         public async Task<PersonMap> FirstPerson(int id)
         {
             // Usiamo la proprietà _context definita a livello di classe
+            using PeopleDbContext _ctx = new();
             var result = await _ctx.People
                 .AsNoTracking()
                 .Where(p => p.Id == id)
@@ -112,6 +110,7 @@ namespace Models.Repository
         }
         public async Task<PersonMap> FirstSocio(int idSocio)
         {
+            using PeopleDbContext _ctx = new();
             var result = await _ctx.Soci
                 .AsNoTracking()
                 .Where(s => s.Id == idSocio)
@@ -125,6 +124,7 @@ namespace Models.Repository
         }
         public async Task<PersonMap> FirstTessera(int idTessera)
         {
+            using PeopleDbContext _ctx = new();
             var result = await _ctx.Tessere
                 .AsNoTracking()
                 .Where(t => t.Id == idTessera)
@@ -139,6 +139,7 @@ namespace Models.Repository
 
         public async Task<int> FirstIdPersonByNumeroTessera(string numeroTessera)
         {
+            using PeopleDbContext _ctx = new();
             var result = await _ctx.Tessere
                 .AsNoTracking()
                 .Where(t => t.NumeroTessera == numeroTessera)
@@ -149,6 +150,7 @@ namespace Models.Repository
 
         public async Task<int> FirstIdPersonByNumeroSocio(string numeroSocio)
         {
+            using PeopleDbContext _ctx = new();
             var result = await _ctx.Soci
                 .AsNoTracking()
                 .Where(s => s.NumeroSocio == numeroSocio)
@@ -159,16 +161,18 @@ namespace Models.Repository
 
         public async Task<bool> HasCodiciSocio(int idperson)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.Soci.AnyAsync(s => s.PersonId == idperson);
         }
 
         public async Task<int> Add(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             // 1. Creiamo l'albero degli oggetti collegati
             var person = new Person
             {
-                FirstName = map.Nome,
-                SurName = map.Cognome,
+                FirstName = map.Nome ?? string.Empty,
+                SurName = map.Cognome ?? string.Empty,
                 Natoil = map.Natoil,
                 UniqueParam = map.CodiceUnivoco,
 
@@ -210,6 +214,7 @@ namespace Models.Repository
         }
         public async Task<int> AddCodiceSocio(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             var socio = new Socio
             {
                 NumeroSocio = map.NumeroSocio,
@@ -245,6 +250,7 @@ namespace Models.Repository
         }
         public async Task<int> AddTessera(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             var tessera = new Tessera
             {
                 NumeroTessera = map.NumeroTessera,
@@ -275,12 +281,13 @@ namespace Models.Repository
 
         public async Task<bool> Upd(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             // 1. Cerchiamo l'entità (FindAsync è ottimo qui)
             var person = await _ctx.People.FindAsync(map.Id);
             if (person == null) return false;
             // 2. Aggiorniamo le proprietà
-            person.FirstName = map.Nome;
-            person.SurName = map.Cognome;
+            person.FirstName = map.Nome ?? string.Empty;
+            person.SurName = map.Cognome ?? string.Empty;
             person.Natoil = map.Natoil;
             person.UniqueParam = map.CodiceUnivoco;
 
@@ -299,6 +306,7 @@ namespace Models.Repository
         }
         public async Task<bool> UpdSocio(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             // 1. Cerchiamo l'entità (FindAsync è ottimo qui)
             var socio = await _ctx.Soci.FindAsync(map.CodiceSocio);
             if (socio == null) return false;
@@ -320,6 +328,7 @@ namespace Models.Repository
         }
         public async Task<bool> UpdTessera(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             // 1. Cerchiamo l'entità (FindAsync è ottimo qui)
             var tessera = await _ctx.Tessere.FindAsync(map.CodiceTessera);
             if (tessera == null) return false;
@@ -342,6 +351,7 @@ namespace Models.Repository
 
         public async Task<bool> Del(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             var person = await _ctx.People.FindAsync(map.Id);
             if (person == null) return false;
 
@@ -361,6 +371,7 @@ namespace Models.Repository
         }
         public async Task<bool> DelSocio(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             var socio = await _ctx.Soci.FindAsync(map.CodiceSocio);
             if (socio == null) return false;
 
@@ -380,6 +391,7 @@ namespace Models.Repository
         }
         public async Task<bool> DelTessera(PersonMap map)
         {
+            using PeopleDbContext _ctx = new();
             var tessera = await _ctx.Tessere.FindAsync(map.CodiceTessera);
             if (tessera == null) return false;
 
@@ -400,30 +412,36 @@ namespace Models.Repository
 
         public async Task<bool> EsisteCodiceUnivoco(string codiceunivoco)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.People.AnyAsync(p => p.UniqueParam == codiceunivoco);
         }
         public async Task<bool> EsisteCodiceUnivoco(string codiceunivoco, int id)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.People.AnyAsync(p => p.UniqueParam == codiceunivoco && p.Id != id);
 
         }
 
         public async Task<bool> EsisteNumeroTessera(string numeroTessera)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.Tessere.AnyAsync(t => t.NumeroTessera == numeroTessera);
         }
         public async Task<bool> EsisteNumeroTesseraUpd(PersonMap dT)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.Tessere.AnyAsync(t => t.NumeroTessera == dT.NumeroTessera &&
                                                     t.Id != dT.CodiceTessera);
         }
 
         public async Task<bool> EsisteNumeroSocio(string numeroSocio)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.Soci.AnyAsync(s => s.NumeroSocio == numeroSocio);
         }
         public async Task<bool> EsisteNumeroSocioUpd(PersonMap dT)
         {
+            using PeopleDbContext _ctx = new();
             return await _ctx.Soci.AnyAsync(s => s.NumeroSocio == dT.NumeroSocio &&
                                                  s.Id != dT.CodiceSocio);
         }

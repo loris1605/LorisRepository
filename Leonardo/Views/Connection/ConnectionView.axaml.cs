@@ -97,6 +97,12 @@ public partial class ConnectionView : ReactiveUserControl<ConnectionViewModel>
                 .DisposeWith(d);
 
             this.OneWayBind(ViewModel,
+                                vm => vm.IsLoading,
+                                v => v.CheckButton.IsEnabled,
+                                loading => !loading) // Converte true -> false e viceversa
+                                .DisposeWith(d);
+
+            this.OneWayBind(ViewModel,
                                 vm => vm.AvviaVisibile,
                                 v => v.AvviaButton.IsEnabled,
                                 l => l)

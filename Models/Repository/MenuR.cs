@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models.Context;
 using Models.Entity;
-using Models.Projections;
+using Models.Mappers;
 using Models.Tables;
 using System.Diagnostics;
 
@@ -10,13 +10,12 @@ namespace Models.Repository
     public class MenuR : IDisposable
     {
         private static int classCount;
-        private readonly MenuDbContext _ctx;
-
+        
         public MenuR() : base()
         {
             System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
                                                $"#{Interlocked.Increment(ref classCount)} caricato *****");
-            _ctx = new MenuDbContext();
+           
         }
 
 #if DEBUG
@@ -30,12 +29,17 @@ namespace Models.Repository
 
 #endif
 
-        public virtual void Dispose() { _ctx.Dispose(); }
+        public virtual void Dispose() {}
 
-        public async Task<bool> EsisteGiornataAperta() => await _ctx.Giornate.AnyAsync(p => p.Aperta);
+        public async Task<bool> EsisteGiornataAperta()
+        {
+            using AppDbContext _ctx = new();
+            return await _ctx.Giornate.AnyAsync(p => p.Aperta);
+        }
 
         public async Task<List<PostazioneMap>> CaricaPostazioniCassa(int CodiceOperatore)
         {
+            using AppDbContext _ctx = new();
             IQueryable<Permesso> query = 
                 _ctx.Permessi
                     .AsNoTracking()
@@ -43,7 +47,7 @@ namespace Models.Repository
                     .Where(p => p.Postazione!.TipoPostazioneId == 2)
                     .Where(p => p.PostazioneId > 0);
 
-            return await query.Select(PermessoProjections.ToPostazioneMap).ToListAsync();
+            return await query.Select(PermessoMapper.ToPostazioneMap).ToListAsync();
 
         }
 

@@ -4,7 +4,6 @@ namespace Models.Entity
 {
     public class PersonMap : BaseMap, IMap
     {
-        public string Nome { get; set; } = string.Empty;
         public string Cognome { get; set; } = string.Empty;
         public int Natoil { get; set; }
         //public DateTime? NatoilDate { get; set; }

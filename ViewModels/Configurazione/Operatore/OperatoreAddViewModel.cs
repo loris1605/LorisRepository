@@ -1,4 +1,5 @@
-﻿using Models.Repository;
+﻿using Models.Entity;
+using Models.Repository;
 using ReactiveUI;
 using SysNet;
 
@@ -31,7 +32,7 @@ namespace ViewModels
         {
             if (!await ValidaDati()) return;
 
-            if (await Q.EsisteNomeOperatore(BindingT))
+            if (await Q.EsisteNome(BindingT))
             {
                 InfoLabel = "Operatore già registrato";
                 await OnFocus(NomeFocus);
@@ -40,11 +41,13 @@ namespace ViewModels
 
             InfoLabel = "";
 
-            int newOperatoreId = await Q.Add(BindingT);
+            CodicePerson = -2;
+            
+            int newOperatoreId = await Q.Add<OperatoreMap>(BindingT);
 
             if (newOperatoreId == -1)
             {
-                InfoLabel = "Errore Db inserimento Socio";
+                InfoLabel = "Errore Db inserimento Operatore";
                 await OnFocus(NomeFocus);
                 return;
             }

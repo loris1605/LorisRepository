@@ -3,9 +3,9 @@ using Models.Entity.Global;
 using Models.Tables;
 using System.Linq.Expressions;
 
-namespace Models.Projections
+namespace Models.Mappers
 {
-    public static class PermessoProjections
+    public static class PermessoMapper
     {
         public static Expression<Func<Permesso, PostazioneXC>> ToPostazioneXC => p => new PostazioneXC
         {
@@ -20,5 +20,17 @@ namespace Models.Projections
             CodiceTipoPostazione = p.PostazioneId,
             NomePostazione = p.Postazione!.Nome
         };
+
+        //public static PostazioneXC ToPostazioneXC(Permesso p)
+        //{
+        //    return new PostazioneXC
+        //    {
+        //        // Usiamo l'operatore ?. perché Postazione è nullable nel modello
+        //        CODICEPOSTAZIONE = p.PostazioneId,
+        //        DESCPOSTAZIONE = p.Postazione?.Nome ?? "Postazione Sconosciuta",
+        //        TIPOPOSTAZIONE = p.Postazione!.TipoPostazioneId
+        //        // ... altri campi ...
+        //    };
+        //}
     }
 }

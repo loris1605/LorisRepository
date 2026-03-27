@@ -7,5 +7,7 @@
         public string NomeSettore { get; set; } = string.Empty;
         public string EtichettaSettore { get; set; } = string.Empty;
 
+        public override string Nome => NomeSettore;
+
     }
 }

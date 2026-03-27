@@ -1,6 +1,6 @@
 ﻿namespace Models.Tables
 {
-    public class Settore
+    public class Settore : IStandardTable
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;

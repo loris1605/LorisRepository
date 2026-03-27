@@ -5,6 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="using:ViewModels"
              xmlns:ui="using:ControlStyles"
+             xmlns:lc="using:Leonardo"
              xmlns:r="using:ReactiveUI.Avalonia"
              KeyboardNavigation.TabNavigation="Cycle"
              Background="LightSteelBlue"
@@ -26,27 +27,10 @@
             <ColumnDefinition Width="50"/>
         </Grid.ColumnDefinitions>-->
 
-        <Border Grid.Row="0" Background="#2C3E50" Height="80" Padding="20,0">
+        <lc:TitleView TitoloPagina="GESTIONE SOCI"
+                      ButtonText="Esci"
+                      x:Name="Title"/>
         
-            <Grid ColumnDefinitions="*, Auto">
-            
-                <ui:UiTitolo Text="GESTIONE SOCI"
-                             x:Name="lblTitolo"/>
-
-                <ui:UiButton x:Name="EsciButton"
-                             HorizontalAlignment="Right"
-                             Grid.Column="1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Image Source="avares://ControlStyles/Resources/ExitIcon.png" 
-                               Width="44" Height="44" />
-                        <TextBlock Text="Esci" VerticalAlignment="Center" />
-                    </StackPanel>
-                </ui:UiButton>
-            
-            </Grid>
-        
-        </Border>
-
         <Grid x:Name="MainGrid"
               ColumnDefinitions="2*,3*"
               Grid.Row="1"

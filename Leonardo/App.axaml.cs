@@ -3,7 +3,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using Splat;
-using System.Threading.Tasks;
 using ViewModels;
 
 namespace Leonardo
@@ -23,8 +22,7 @@ namespace Leonardo
 
             RegisterViews();
 
-            _ = Task.Run(async () => await RegisterViewsAsync());
-
+            
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow();
@@ -47,71 +45,84 @@ namespace Leonardo
             Locator.CurrentMutable.Register(() =>
                         new MenuView(), typeof(IViewFor<MenuViewModel>));
 
-            
+            #region Soci
 
-        }
-
-        private static async Task RegisterViewsAsync()
-        {
-            await Task.Run(() =>
-            {
-                #region Soci
-
-                Locator.CurrentMutable.Register(() =>
+            Locator.CurrentMutable.Register(() =>
                             new SociView(), typeof(IViewFor<SociViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new PersonGroupView(), typeof(IViewFor<PersonGroupViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new PersonGroupView(), typeof(IViewFor<PersonGroupViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new PersonInputView(), typeof(IViewFor<PersonAddViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new PersonInputView(), typeof(IViewFor<PersonAddViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new PersonInputView(), typeof(IViewFor<PersonUpdViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new PersonInputView(), typeof(IViewFor<PersonUpdViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new PersonInputView(), typeof(IViewFor<PersonDelViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new PersonInputView(), typeof(IViewFor<PersonDelViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new PersonSearchView(), typeof(IViewFor<PersonSearchViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new PersonSearchView(), typeof(IViewFor<PersonSearchViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new SocioInputView(), typeof(IViewFor<CodiceSocioAddViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new SocioInputView(), typeof(IViewFor<CodiceSocioAddViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new SocioInputView(), typeof(IViewFor<CodiceSocioDelViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new SocioInputView(), typeof(IViewFor<CodiceSocioDelViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new SocioInputView(), typeof(IViewFor<CodiceSocioUpdViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new SocioInputView(), typeof(IViewFor<CodiceSocioUpdViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new TesseraInputView(), typeof(IViewFor<TesseraAddViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new TesseraInputView(), typeof(IViewFor<TesseraAddViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new TesseraInputView(), typeof(IViewFor<TesseraDelViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new TesseraInputView(), typeof(IViewFor<TesseraDelViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new TesseraInputView(), typeof(IViewFor<TesseraUpdViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new TesseraInputView(), typeof(IViewFor<TesseraUpdViewModel>));
 
-                #endregion
+#endregion
 
-                #region Configurazione
+            #region Configurazione
 
-                Locator.CurrentMutable.Register(() =>
-                            new ConfigurazioneView(), typeof(IViewFor<ConfigurazioneViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new ConfigurazioneView(), typeof(IViewFor<ConfigurazioneViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new OperatoreGroupView(), typeof(IViewFor<OperatoreGroupViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new OperatoreGroupView(), typeof(IViewFor<OperatoreGroupViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new OperatoreInputView(), typeof(IViewFor<OperatoreAddViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new OperatoreInputView(), typeof(IViewFor<OperatoreAddViewModel>));
 
-                Locator.CurrentMutable.Register(() =>
-                            new OperatoreInputView(), typeof(IViewFor<OperatoreUpdViewModel>));
+            Locator.CurrentMutable.Register(() =>
+                        new OperatoreInputView(), typeof(IViewFor<OperatoreUpdViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new OperatoreInputView(), typeof(IViewFor<OperatoreDelViewModel>));
 
 
-                #endregion
-            });
+
+            Locator.CurrentMutable.Register(() =>
+                        new PostazioneGroupView(), typeof(IViewFor<PostazioneGroupViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new PostazioneInputView(), typeof(IViewFor<PostazioneAddViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new PostazioneInputView(), typeof(IViewFor<PostazioneDelViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new PostazioneInputView(), typeof(IViewFor<PostazioneUpdViewModel>));
+
+
+            #endregion
+
+
+
         }
+
+        
     }
 }

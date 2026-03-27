@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using Models.Entity;
+﻿using Models.Entity;
 using Models.Repository;
 using ReactiveUI;
 using System.Reactive;
@@ -12,20 +11,30 @@ namespace ViewModels
     {
         public ReactiveCommand<Unit, Unit> FilterCommand { get; }
         public ReactiveCommand<Unit, Unit> UpdCommand { get; }
-        public ReactiveCommand<Unit, Unit> DelCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> DelCommand { get;  }
+        public ReactiveCommand<Unit, Unit> PostazioniCommand { get; }
+        public ReactiveCommand<Unit, Unit> SettoriCommand { get; }
 
         public OperatoreGroupViewModel(IScreen host) : base(host)
         {
             FilterCommand = ReactiveCommand.CreateFromTask(OnCancelFilter);
+            PostazioniCommand = ReactiveCommand.CreateFromTask(OnGoToPosizioni);
             UpdCommand = ReactiveCommand.CreateFromTask(OnUpd);
-            
+
+            DelCommand = ReactiveCommand.CreateFromTask(
+                OnDel,
+                this.WhenAnyValue(
+                           x => x.GroupBindingT.CodicePermesso, // Monitora la proprietà specifica
+                           x => x.GroupBindingT.Id,             // Monitora l'Id
+                           (permesso, id) =>
+                               this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
+                               permesso == 0 &&
+                               id != -1));
+
+
             this.WhenActivated(d =>
             {
-
-                var canDel = this.WhenAnyValue(
-                            x => x.GroupBindingT.CodicePermesso,
-                            (codice) => codice == 0);
-
+                
                 //var canSocioUpd = this.WhenAnyValue(
                 //            x => x.GroupBindingT.CodiceSocio,
                 //            (codice) => codice != 0);
@@ -45,7 +54,10 @@ namespace ViewModels
                 //            x => x.GroupBindingT.NumeroTessera,
                 //            (codice, tessera) => codice != 0 && string.IsNullOrWhiteSpace(tessera));
 
-                DelCommand = ReactiveCommand.CreateFromTask(OnDel, canDel).DisposeWith(d);
+                FilterCommand.DisposeWith(d);
+                UpdCommand.DisposeWith(d);
+                DelCommand.DisposeWith(d);
+                PostazioniCommand.DisposeWith(d);
 
                 //DelCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnDelCodiceSocio, canSocioDel)
                 //.DisposeWith(d);
@@ -102,6 +114,16 @@ namespace ViewModels
         {
             await OnLoading();
 
+        }
+
+        private async Task OnGoToPosizioni()
+        {
+            if (HostScreen is IConfigurazioneScreen configurazioneHost)
+            {
+                await configurazioneHost.ConfigurazioneRouter
+                    .NavigateAndReset
+                    .Execute(new PostazioneGroupViewModel(configurazioneHost));
+            }
         }
     }
 }

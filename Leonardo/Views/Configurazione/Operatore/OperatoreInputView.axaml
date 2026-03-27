@@ -42,8 +42,7 @@
                 <ui:UiTitolo x:Name="lblTitolo" 
                          FontSize="22" 
                          SubTitolo="True"
-                         Margin="30,0" 
-                         Text="Aggiungi Nuovo Operatore"
+                         Margin="30,0"
                          HorizontalAlignment="Center"/>
 
                 <Viewbox Grid.Row="1"

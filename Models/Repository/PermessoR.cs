@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using Models.Context;
+using Models.Tables;
+using System.Diagnostics;
 
 namespace Models.Repository
 {
-    public class PermessoR : IDisposable
+    public class PermessoR : BaseRepository<AppDbContext, Permesso>
     {
         private static int classCount;
 
@@ -23,6 +25,6 @@ namespace Models.Repository
 
 #endif
 
-        public virtual void Dispose() { }
+        
     }
 }

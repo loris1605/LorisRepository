@@ -38,10 +38,9 @@ public partial class ConfigurazioneView : ReactiveUserControl<ConfigurazioneView
 
             #region Commands
 
-            this.BindCommand(ViewModel,
+            this.Bind(ViewModel,
                 vm => vm.EsciCommand,
-                v => v.EsciButton)
-                .DisposeWith(d);
+                v => v.Title.ExitCommand).DisposeWith(d);
 
             #endregion
 

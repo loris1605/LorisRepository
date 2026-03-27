@@ -56,6 +56,8 @@ namespace ViewModels
                     })
                     .DisposeWith(d);
 
+                AddCommand.DisposeWith(d);
+
                 
             });
         }

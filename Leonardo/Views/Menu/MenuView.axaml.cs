@@ -14,7 +14,6 @@ public partial class MenuView : ReactiveUserControl<MenuViewModel>
         InitializeComponent();
 
 
-
         this.WhenActivated(d =>
         {
             #region TwoWay
@@ -104,12 +103,16 @@ public partial class MenuView : ReactiveUserControl<MenuViewModel>
 
             #region Commands
 
-            this.BindCommand(ViewModel,
-                vm => vm.NavigateCommand,
-                v => v.LogoutButton,
-                Observable.Return("Login"),
-                nameof(LogoutButton.Click)) // Passa un valore statico tramite Observable
-                .DisposeWith(d);
+            this.Bind(ViewModel,
+                vm => vm.LogoutCommand,
+                v => v.Title.ExitCommand).DisposeWith(d);
+
+            //this.BindCommand(ViewModel,
+            //    vm => vm.NavigateCommand,
+            //    v => v.LogoutButton,
+            //    Observable.Return("Login"),
+            //    nameof(LogoutButton.Click)) // Passa un valore statico tramite Observable
+            //    .DisposeWith(d);
 
             this.BindCommand(ViewModel,
                 vm => vm.NavigateCommand,

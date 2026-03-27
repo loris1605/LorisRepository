@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using System.Reactive;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
 namespace ViewModels
@@ -21,12 +22,16 @@ namespace ViewModels
         public RoutingState ConfigurazioneInputRouter { get; } = new RoutingState();
         public RoutingState Router => ConfigurazioneRouter;
 
-        public ReactiveCommand<Unit, IRoutableViewModel> EsciCommand { get; }
+        public ReactiveCommand<Unit, Unit> EsciCommand { get; }
 
         public ConfigurazioneViewModel(IScreen host) : base(host)
         {
-            EsciCommand = ReactiveCommand.CreateFromObservable(() =>
-                        HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen)));
+            EsciCommand = ReactiveCommand.Create(OnGoToMenu);
+
+            this.WhenActivated(d =>
+            {
+                EsciCommand.DisposeWith(d);
+            });
             
         }
 
@@ -52,6 +57,11 @@ namespace ViewModels
                 // Se hai un comando di ricarica nel GroupViewModel:
                 // groupVm.LoadCommand.Execute().Subscribe();
             }
+        }
+
+        private void OnGoToMenu()
+        {
+            HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen));
         }
     }
 

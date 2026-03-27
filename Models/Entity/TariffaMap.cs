@@ -6,6 +6,8 @@
         public string EtichettaTariffa { get; set; } = string.Empty;
         public decimal PrezzoTariffa { get; set; } = decimal.Zero;
         public bool IsFreeDrink { get; set; }
-        
+
+        public override string Nome => NomeTariffa;
+
     }
 }
