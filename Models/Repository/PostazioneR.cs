@@ -46,10 +46,7 @@ namespace Models.Repository
             return await _ctx.TipiPostazione
                 .AsNoTracking()
                 .OrderBy(p => p.Nome)
-                .Select(p => new TipoPostazioneMap
-                {
-                    Id = p.Id, Nome = p.Nome
-                }).ToListAsync();
+                .Select(TipoPostazioneMapper.ToMap).ToListAsync();
         }
 
         public async Task<List<TipoRientroMap>> LoadTipiRientro()
@@ -58,12 +55,7 @@ namespace Models.Repository
             return await _ctx.TipiRientro
                 .AsNoTracking()
                 .OrderBy(p => p.Nome)
-                .Select(p => new TipoRientroMap
-                {
-                    Id = p.Id,
-                    Nome = p.Nome,
-                    Hours = p.DurataOre
-                }).ToListAsync();
+                .Select(TipoRientroMapper.ToMap).ToListAsync();
         }
 
         public async Task<PostazioneMap> GetById(int id) =>

@@ -33,8 +33,12 @@ namespace ViewModels
         {
             TipoPostDataSource = await Q.LoadTipiPostazione();
             TipoRientroDataSource = await Q.LoadTipiRientro();
-            CodiceTipoPostazione = TipoPostDataSource[0].Id;
-            CodiceTipoRientro = TipoRientroDataSource[0].Id;
+            // Seleziona il primo elemento solo se la lista non è vuota
+            if (TipoPostDataSource?.Count > 0)
+                CodiceTipoPostazione = TipoPostDataSource[0].Id;
+
+            if (TipoRientroDataSource?.Count > 0)
+                CodiceTipoRientro = TipoRientroDataSource[0].Id;
         }
 
         protected async override Task OnSaving()

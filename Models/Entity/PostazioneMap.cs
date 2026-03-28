@@ -15,21 +15,35 @@ namespace Models.Entity
         public int CodiceTipoRientro { get; set; }
         public string NomeTipoRientro { get; set; } = string.Empty;
 
-        public override string Nome => NomePostazione;
+        public override string Nome
+        {
+            get => NomePostazione;
+            set => NomePostazione = value ?? string.Empty;
+        }
 
-        public new string? Titolo => $"{NomePostazione} - {NomeTipoPostazione}";
+        public override string? Titolo => $"{NomePostazione} - {NomeTipoPostazione}";
 
         public Postazione ToTable() => Mappers.PostazioneMapper.ToTable(this);
 
         public void UpdateTable(Postazione existing)
         {
-            // Aggiorniamo solo i campi che possono cambiare
-            existing.Nome = this.NomePostazione;
-            existing.TipoPostazioneId = this.CodiceTipoPostazione;
-            existing.TipoRientroId = this.CodiceTipoRientro;
-            
-            // Non tocchiamo l'ID!
-        }
+            if (existing == null) return;
 
+            // Mappatura campi semplici
+            existing.Nome = this.NomePostazione;
+
+            // Mappatura Foreign Key (Assicurati che questi ID siano validi nel DB)
+            existing.TipoPostazioneId = this.CodiceTipoPostazione;
+
+            // Se TipoRientroId nella tabella Postazione è Nullable (int?), 
+            // e il codice è 0, valuta se assegnare null
+            existing.TipoRientroId = this.CodiceTipoRientro > 0 ? this.CodiceTipoRientro : -1;
+
+            // NOTA: CodiceReparto non viene aggiornato qui. 
+            // Se la Postazione deve cambiare Reparto, devi aggiornare la FK specifica 
+            // nella tabella Postazione (es. existing.RepartoId = this.CodiceReparto).
+        }
     }
+
+
 }

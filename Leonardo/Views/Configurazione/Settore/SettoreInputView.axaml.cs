@@ -12,20 +12,29 @@ using ViewModels;
 
 namespace Leonardo;
 
-public partial class PostazioneInputView : ReactiveUserControl<PostazioneInputBase>
+public partial class SettoreInputView : ReactiveUserControl<SettoreInputBase>
 {
-    public PostazioneInputView()
+    public SettoreInputView()
     {
         InitializeComponent();
 
         this.WhenActivated(d =>
         {
-            
+
             ViewModel?.NomeFocus
                     .RegisterHandler(interaction =>
                     {
                         NomeBox.Focus();
                         NomeBox.SelectAll();
+                        interaction.SetOutput(Unit.Default);
+                    })
+                    .DisposeWith(d);
+
+            ViewModel?.LabelFocus
+                    .RegisterHandler(interaction =>
+                    {
+                        EtichettaBox.Focus();
+                        EtichettaBox.SelectAll();
                         interaction.SetOutput(Unit.Default);
                     })
                     .DisposeWith(d);
@@ -50,16 +59,22 @@ public partial class PostazioneInputView : ReactiveUserControl<PostazioneInputBa
 
             //Bind Nome to TextBox
             this.Bind(ViewModel,
-                      vm => vm.NomePostazione,
+                      vm => vm.NomeSettore,
                       v => v.NomeBox.Text)
                 .DisposeWith(d);
 
-            
+            //Bind Label to TextBox
+            this.Bind(ViewModel,
+                      vm => vm.EtichettaSettore,
+                      v => v.EtichettaBox.Text)
+                .DisposeWith(d);
+
+
 
             //Bind SelectedValue To TipoPostazioneCombo
             this.Bind(ViewModel,
-                      vm => vm.CodiceTipoPostazione,
-                      v => v.TipoPostazioneCombo.SelectedValue)
+                      vm => vm.CodiceTipoSettore,
+                      v => v.TipoSettoreCombo.SelectedValue)
                 .DisposeWith(d);
 
 
@@ -71,38 +86,12 @@ public partial class PostazioneInputView : ReactiveUserControl<PostazioneInputBa
                     vm => vm.Titolo,
                     v => v.lblTitolo.Text)
             .DisposeWith(d);
-            
+
             this.OneWayBind(ViewModel,
                     vm => vm.FieldsEnabled,
                     v => v.InputGrid.IsEnabled)
             .DisposeWith(d);
-           
 
-            //Bind TipoRientroCombo IsEnabled to RientroVisibile
-            this.OneWayBind(ViewModel,
-                    vm => vm.RientroVisibile,
-                    v => v.TipoRientroCombo.IsVisible)
-            .DisposeWith(d);
-
-            //this.OneWayBind(ViewModel,
-            //        vm => vm.FieldsVisibile,
-            //        v => v.CodiceSocioBox.IsVisible)
-            //.DisposeWith(d);
-
-            //this.OneWayBind(ViewModel,
-            //        vm => vm.FieldsVisibile,
-            //        v => v.NumeroTesseraBox.IsVisible)
-            //.DisposeWith(d);
-
-            //this.OneWayBind(ViewModel,
-            //        vm => vm.FieldsVisibile,
-            //        v => v.CodiceSocioLabel.IsVisible)
-            //.DisposeWith(d);
-
-            //this.OneWayBind(ViewModel,
-            //        vm => vm.FieldsVisibile,
-            //        v => v.NumeroTesseraLabel.IsVisible)
-            //.DisposeWith(d);
 
             this.OneWayBind(ViewModel,
                     vm => vm.InfoLabel,
@@ -126,7 +115,7 @@ public partial class PostazioneInputView : ReactiveUserControl<PostazioneInputBa
 
             Disposable.Create(() => {
                 this.DataContext = null;
-                System.Diagnostics.Debug.WriteLine(">>> [VIEW] OperatoreInputView deattivata, DataContext rimosso.");
+                System.Diagnostics.Debug.WriteLine(">>> [VIEW] SettoreInputView deattivata, DataContext rimosso.");
             }).DisposeWith(d);
         });
     }

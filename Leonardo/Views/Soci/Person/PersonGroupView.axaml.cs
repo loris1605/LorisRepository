@@ -42,13 +42,13 @@ public partial class PersonGroupView : ReactiveUserControl<PersonGroupViewModel>
 
             this.OneWayBind(ViewModel,
                     vm => vm.EnabledButton,
-                    v => v.UpdButton.IsEnabled,
+                    v => v.CrudBar.UpdButton.IsEnabled,
                     l => l)
             .DisposeWith(d);
 
             this.OneWayBind(ViewModel,
                     vm => vm.EnabledButton,
-                    v => v.DelButton.IsEnabled,
+                    v => v.CrudBar.DelButton.IsEnabled,
                     l => l)
             .DisposeWith(d);
 
@@ -62,30 +62,34 @@ public partial class PersonGroupView : ReactiveUserControl<PersonGroupViewModel>
 
             #region Commands
 
-            this.BindCommand(ViewModel,
+            this.Bind(ViewModel,
                 vm => vm.AddCommand,
-                v => v.AddButton) 
-                .DisposeWith(d);
+                v => v.CrudBar.AddCommand)
+            .DisposeWith(d);
 
-            this.BindCommand(ViewModel,
+            this.Bind(ViewModel,
                 vm => vm.PersonUpdCommand,
-                v => v.UpdButton) 
-                .DisposeWith(d);
+                v => v.CrudBar.UpdCommand)
+            .DisposeWith(d);
 
-            this.BindCommand(ViewModel,
+            this.Bind(ViewModel,
                 vm => vm.PersonDelCommand,
-                v => v.DelButton)
-                .DisposeWith(d);
+                v => v.CrudBar.DelCommand)
+            .DisposeWith(d);
 
-            this.BindCommand(ViewModel,
+            this.Bind(ViewModel,
                 vm => vm.PersonSearchCommand,
-                v => v.FilterButton)
-                .DisposeWith(d);
+                v => v.CrudBar.FilterCommand)
+            .DisposeWith(d);
+
+
 
             this.BindCommand(ViewModel,
                 vm => vm.FilterCommand,
-                v => v.CancelFilterButton)
+                v => v.CrudBar.CancelCommand)
                 .DisposeWith(d);
+
+
 
             this.BindCommand(ViewModel,
                 vm => vm.AddCodiceSocioCommand,

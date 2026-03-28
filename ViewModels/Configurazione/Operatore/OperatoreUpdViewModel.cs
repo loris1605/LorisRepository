@@ -31,7 +31,7 @@ namespace ViewModels
         protected override async Task OnLoading()
         {
             BindingT = await Q.GetById(_idDaModificare);
-            if (BindingT == null)
+            if (GetCodiceOperatore == 0)
             {
                 InfoLabel = "Errore: Operatore non trovato nel database.";
                 FieldsEnabled = false;

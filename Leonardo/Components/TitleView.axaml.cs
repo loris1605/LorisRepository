@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using ReactiveUI;
 using System.Reactive;
-using System.Windows.Input;
 
 namespace Leonardo;
 

@@ -16,14 +16,15 @@ namespace Models.Entity
         
         public string CodiceUnivoco { get; set; } = string.Empty;
 
-        // OVERRIDE o ASSEGNAZIONE del Titolo ereditato
-        // Viene calcolato ogni volta che serve (ReadOnly)
-        public new string? Titolo => $"{Nome} {Cognome} ({NatoilDate.ToShortDateString()})";
+        // 2. Aggiungi un controllo di sicurezza sulle date (se l'int è 0, ToShortDateString crasha)
+        public override string? Titolo => $"{Nome} {Cognome} ({NatoilDate.ToShortDateString()})";
 
         public DateTime NatoilDate => Natoil.DateIntToDate();
         public DateTime ScadenzaDate => Scadenza.DateIntToDate();
 
         public bool IsMaggiorenne => Natoil.IsLegalAge();
+
+        public override string Nome { get; set; } = string.Empty;
 
     }
 

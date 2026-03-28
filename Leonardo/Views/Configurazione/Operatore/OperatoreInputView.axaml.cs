@@ -27,18 +27,13 @@ public partial class OperatoreInputView : ReactiveUserControl<OperatoreInputBase
                             interaction.SetOutput(Unit.Default);
                         })
                         .DisposeWith(d);
+                
+                this.OneWayBind(ViewModel,
+                    vm => vm.EscFocus,
+                    view => view.InputSaveBox.EscFocus)
+                .DisposeWith(d);
 
-                ViewModel?.EscFocus
-                    .RegisterHandler(interaction =>
-                    {
-                        Dispatcher.UIThread.Post(() =>
-                        {
-                            EsciButton.Focus();
-                        });
-                        interaction.SetOutput(Unit.Default);
-                    })
-                    .DisposeWith(d);
-
+                
                 ViewModel?.PasswordFocus
                         .RegisterHandler(interaction =>
                         {
@@ -119,26 +114,7 @@ public partial class OperatoreInputView : ReactiveUserControl<OperatoreInputBase
                           v => v.AbilitatoCheckBox.IsVisible)
                     .DisposeWith(d);
 
-                //this.OneWayBind(ViewModel,
-                //        vm => vm.FieldsVisibile,
-                //        v => v.CodiceSocioBox.IsVisible)
-                //.DisposeWith(d);
-
-                //this.OneWayBind(ViewModel,
-                //        vm => vm.FieldsVisibile,
-                //        v => v.NumeroTesseraBox.IsVisible)
-                //.DisposeWith(d);
-
-                //this.OneWayBind(ViewModel,
-                //        vm => vm.FieldsVisibile,
-                //        v => v.CodiceSocioLabel.IsVisible)
-                //.DisposeWith(d);
-
-                //this.OneWayBind(ViewModel,
-                //        vm => vm.FieldsVisibile,
-                //        v => v.NumeroTesseraLabel.IsVisible)
-                //.DisposeWith(d);
-
+                
                 this.OneWayBind(ViewModel,
                         vm => vm.InfoLabel,
                         v => v.InfoLabel.Text)
@@ -148,13 +124,13 @@ public partial class OperatoreInputView : ReactiveUserControl<OperatoreInputBase
 
                 #region Commands
 
-                this.BindCommand(ViewModel,
-                                 vm => vm.EscPressedCommand,
-                                 v => v.EsciButton).DisposeWith(d);
+                this.Bind(ViewModel,
+                    vm => vm.EscPressedCommand,
+                    v => v.InputSaveBox.ExitCommand).DisposeWith(d);
 
-                this.BindCommand(ViewModel,
-                                 vm => vm.SaveCommand,
-                                 v => v.SalvaButton).DisposeWith(d);
+                this.Bind(ViewModel,
+                    vm => vm.SaveCommand,
+                    v => v.InputSaveBox.SaveCommand).DisposeWith(d);
 
 
                 #endregion

@@ -26,8 +26,10 @@ namespace Models.Repository
 
         public async Task<List<SettoreMap>> LoadSettori(Expression<Func<Settore, bool>> predicate)
         {
-            using SettoreDbContext _ctx = new();
-            return await _ctx.Settori
+            using AppDbContext _ctx = new();
+            try
+            {
+                var x =  await _ctx.Settori
                 .AsNoTracking()
                 .Where(predicate)
                 .OrderBy(p => p.Nome)
@@ -36,6 +38,16 @@ namespace Models.Repository
                     SettoreMapper.ToSettoreMap// Usiamo la proiezione statica
                 )
                 .ToListAsync();
+                return x;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Errore in OnLoading: {ex.Message}");
+                return new List<SettoreMap>();
+            }
+            
+            
+            
         }
 
         public async Task<List<TipoSettoreMap>> LoadTipiSettore()
@@ -44,11 +56,7 @@ namespace Models.Repository
             return await _ctx.TipiSettore
                 .AsNoTracking()
                 .OrderBy(p => p.Nome)
-                .Select(p => new TipoSettoreMap
-                {
-                    Id = p.Id,
-                    Nome = p.Nome
-                }).ToListAsync();
+                .Select(TipoSettoreMapper.ToMap).ToListAsync();
         }
 
         public async Task<SettoreMap> GetById(int id) =>

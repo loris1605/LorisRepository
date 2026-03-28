@@ -212,7 +212,7 @@
                                  Margin="20,5"
                                  ToolTipText="GRUPPO POSTAZIONI"
                                  HorizontalAlignment="Stretch"
-                                 Content="SETTORI"
+                                 Content="POSTAZIONI"
                                  HorizontalContentAlignment="Center"/>
 
             <ui:UiButton x:Name="TariffeButton"

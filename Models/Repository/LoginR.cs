@@ -64,41 +64,41 @@ namespace Models.Repository
 
         public async Task SaveSettings(LoginMap dT)
         {
-            
-            OperatoreXC XOperatore = Create<OperatoreXC>.Instance();
 
-            XOperatore.IDOPERATORE = dT.Id;
-            XOperatore.NOMEOPERATORE = dT.NomeOperatore;
-            XOperatore.PASSWORD = dT.Password;
-
-            XOperatore.POSTAZIONI = await ListPostazioniByOperatore(dT.Id);
-
-            if (XOperatore.POSTAZIONI.Count == 0)
+            await Task.Run(async () =>
             {
-                GlobalValuesC.MySetting = XOperatore;
-                await Task.CompletedTask;
-            }
+                OperatoreXC XOperatore = Create<OperatoreXC>.Instance();
 
-            foreach (var postazione in XOperatore.POSTAZIONI)
-            {
-                postazione.SETTORI = await SelectSettoriX(postazione.CODICEPOSTAZIONE);
+                XOperatore.IDOPERATORE = dT.Id;
+                XOperatore.NOMEOPERATORE = dT.NomeOperatore;
+                XOperatore.PASSWORD = dT.Password;
 
-                if (postazione.SETTORI.Count > 0)
+                // Le tue funzioni atomiche originali, ma con ConfigureAwait
+                XOperatore.POSTAZIONI = await ListPostazioniByOperatore(dT.Id).ConfigureAwait(false);
+
+                if (XOperatore.POSTAZIONI.Count > 0)
                 {
-                    foreach (var settore in postazione.SETTORI)
+                    foreach (var postazione in XOperatore.POSTAZIONI)
                     {
-                        settore.TARIFFE = await SelectTariffeX(settore.CODICESETTORE) ?? [];
+                        postazione.SETTORI = await SelectSettoriX(postazione.CODICEPOSTAZIONE).ConfigureAwait(false);
+
+                        foreach (var settore in postazione.SETTORI)
+                        {
+                            // Evitiamo il null con l'operatore ?? []
+                            settore.TARIFFE = await SelectTariffeX(settore.CODICESETTORE).ConfigureAwait(false) ?? [];
+                        }
                     }
                 }
-            }
 
-            XOperatore.GIORNATA = await GetGiornataOpen();
-            
+                XOperatore.GIORNATA = await GetGiornataOpen().ConfigureAwait(false);
+
             GlobalValuesC.MySetting = XOperatore;
+            });
 
         }
 
-       
+        
+
         private async Task<GiornataXC?> GetGiornataOpen()
         {
             using LoginDbContext _ctx = new();

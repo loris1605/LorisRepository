@@ -120,6 +120,15 @@ namespace Leonardo
             Locator.CurrentMutable.Register(() =>
                         new SettoreGroupView(), typeof(IViewFor<SettoreGroupViewModel>));
 
+            Locator.CurrentMutable.Register(() =>
+                        new SettoreInputView(), typeof(IViewFor<SettoreAddViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new SettoreInputView(), typeof(IViewFor<SettoreDelViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new SettoreInputView(), typeof(IViewFor<SettoreUpdViewModel>));
+
 
             #endregion
 

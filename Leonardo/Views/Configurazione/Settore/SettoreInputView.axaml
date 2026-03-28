@@ -10,7 +10,8 @@
              KeyboardNavigation.TabNavigation="Cycle"
              Background="Transparent"
              x:CompileBindings="False"
-             x:Class="Leonardo.TesseraInputView">
+             x:DataType="vm:SettoreInputBase"
+             x:Class="Leonardo.SettoreInputView">
 
     <Grid x:Name="MainGrid" >
     
@@ -27,15 +28,14 @@
         </Grid.ColumnDefinitions>
 
         <ui:PopupBorder VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Grid.Row="1"
-                    Grid.Column="1">
+                        HorizontalAlignment="Center"
+                        Grid.Row="1"
+                        Grid.Column="1">
         
             <Grid x:Name="PopupGrid">
             
                 <Grid.RowDefinitions>
 					<RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -47,44 +47,68 @@
                          Margin="30,0" 
                          HorizontalAlignment="Center"/>
 
-                <ui:UiTitolo x:Name="lblTitolo1" 
-                         FontSize="22" 
-                         Grid.Row="1"
-                         SubTitolo="True"
-                         Margin="30,0" 
-                         HorizontalAlignment="Center"/>
-
-                <Grid x:Name="InputGrid" 
-                      Grid.Row="2"
-                      Margin="10">
+                <Viewbox Grid.Row="1"
+                         Margin="10">
                 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="5"/>
-						<RowDefinition Height="Auto" MinHeight="35"/>
-                        <RowDefinition Height="Auto" MinHeight="35"/>
-                        <RowDefinition Height="Auto" MinHeight="35"/>
-                    </Grid.RowDefinitions>
+                    <Grid x:Name="InputGrid">
+                    
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="5"/>
+					    	<RowDefinition Height="Auto" MinHeight="35"/>
+                            <RowDefinition Height="Auto" MinHeight="35"/>
+                            <RowDefinition Height="Auto" MinHeight="35"/>
+                            
+                        </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="250"/>
-                    </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="250"/>
+                        </Grid.ColumnDefinitions>
 
-                    <ui:UiLabelForGrid Text="NUMERO TESSERA :" 
-                                       x:Name="NumeroTesseraLabel"
+                        <ui:UiLabelForGrid Text="NOME :" 
                                        Margin="10,10,0,10"
                                        Grid.Row="1"/>
 
-                    <ui:UiIntegerTextBox Grid.Row="1" 
-                                         x:Name="NumeroTesseraBox"
-                                         Grid.Column="1"
-                                         Margin="25,2,25,2"
-                                         VerticalAlignment="Center"/>
+                        <ui:UiTextBox Grid.Row="1" 
+                                  x:Name="NomeBox"
+                                  Grid.Column="1"
+                                  Margin="25,2,25,2"
+                                  VerticalAlignment="Center"/>
+
+                        <ui:UiLabelForGrid Text="ETICHETTA :" 
+                                       Margin="10,10,0,10"
+                                       Grid.Row="2"/>
+
+                        <ui:UiTextBox Grid.Row="2" 
+                                  x:Name="EtichettaBox"
+                                  Grid.Column="1"
+                                  Margin="25,2,25,2"
+                                  VerticalAlignment="Center"/>
+
+                        <ui:UiLabelForGrid Text="TIPO SETTORE :" 
+                                       Margin="10,10,0,10"
+                                       Grid.Row="3"/>
+
+                        <ui:UiComboBox x:Name="TipoSettoreCombo"
+                                   ItemsSource="{Binding TipoSettDataSource}"
+                                   DisplayMemberBinding="{Binding Nome}"
+                                   SelectedValueBinding="{Binding Id}"
+                                   SelectedValue="{Binding CodiceTipoSettore}"
+                                   Background="White"
+                                   HorizontalContentAlignment="Center"
+                                   Grid.Column="1"
+                                   Grid.Row="3"
+                                   Height="30"
+                                   Margin="25,10,25,10"
+                                   IsTabStop="False"
+                                   Foreground="Black"/>
+         
+                    </Grid>
                 
-                </Grid>
+                </Viewbox>
 
                 <TextBlock x:Name="InfoLabel"
-                           Grid.Row="3"
+                           Grid.Row="2"
                            Foreground="White"
                            HorizontalAlignment="Center"
                            Margin="20,10">
@@ -111,7 +135,7 @@
                 <lc:InputSaveBox x:Name="InputSaveBox"
                                  Grid.Row="3"
                                  Margin="20"/>
-
+            
             </Grid>
         
         </ui:PopupBorder>

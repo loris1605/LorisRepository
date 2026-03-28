@@ -1,23 +1,27 @@
 ﻿using Models.Repository;
 using ReactiveUI;
 using SysNet;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ViewModels
 {
-    public class PostazioneUpdViewModel : PostazioneInputBase
+    public class SettoreUpdViewModel : SettoreInputBase
     {
-        private PostazioneR Q { get; set; }
+        private SettoreR Q { get; set; }
         private readonly int _idDaModificare;
 
-        public PostazioneUpdViewModel(IScreen host, int idoperatore) : base(host)
+        public SettoreUpdViewModel(IScreen host, int idoperatore) : base(host)
         {
             _idDaModificare = idoperatore;
 
-            Titolo = "Modifica Postazione";
-
+            Titolo = "Modifica Settore";
             FieldsEnabled = true;
 
-            Q = Create<PostazioneR>.Instance();
+            Q = Create<SettoreR>.Instance();
         }
 
         protected override void OnFinalDestruction()
@@ -28,40 +32,34 @@ namespace ViewModels
 
         protected override async Task OnLoading()
         {
-            TipoPostDataSource = await Q.LoadTipiPostazione();
-            TipoRientroDataSource = await Q.LoadTipiRientro();
+            TipoSettDataSource = await Q.LoadTipiSettore();
             BindingT = await Q.GetById(_idDaModificare);
-            if (GetCodicePostazione == 0)
+            if (GetCodiceSettore == 0)
             {
-                InfoLabel = "Errore: Postazione non trovata nel database.";
+                InfoLabel = "Errore: Settore non trovato nel database.";
                 FieldsEnabled = false;
-                await OnFocus(EscFocus);
-                return;
             }
-            await OnFocus(NomeFocus);
+            await OnFocus(EscFocus);
         }
 
         protected override async Task OnSaving()
         {
+            InfoLabel = "";
             if (!await ValidaDati()) return;
-
             if (await Q.EsisteNomeUpd(BindingT))
             {
-                InfoLabel = "Operatore già registrato";
+                InfoLabel = "Settore già registrato";
                 return;
             }
-
-            InfoLabel = "";
-
+            
             if (!await Q.Upd(BindingT))
             {
-                InfoLabel = "Errore Db modifica postazione";
+                InfoLabel = "Errore Db modifica Settore";
                 await OnFocus(NomeFocus);
                 return;
             }
 
             OnBack(_idDaModificare);
-
         }
     }
 }

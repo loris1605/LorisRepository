@@ -29,7 +29,7 @@ namespace ViewModels
             TipoPostDataSource = await Q.LoadTipiPostazione();
             TipoRientroDataSource = await Q.LoadTipiRientro();
             BindingT = await Q.GetById(_idDaModificare);
-            if (BindingT == null)
+            if (GetCodicePostazione == 0)
             {
                 InfoLabel = "Errore: Postazione non trovata nel database.";
                 FieldsEnabled = false;

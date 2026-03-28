@@ -9,28 +9,22 @@ namespace Models.Mappers
     {
         public static Expression<Func<Permesso, PostazioneXC>> ToPostazioneXC => p => new PostazioneXC
         {
+            // Usiamo l'ID direttamente dal Permesso (più sicuro della navigazione)
             CODICEPOSTAZIONE = p.PostazioneId,
-            DESCPOSTAZIONE = p.Postazione!.Nome!,
-            TIPOPOSTAZIONE = p.Postazione.TipoPostazioneId
+            // Usiamo il null-conditional per la navigazione
+            DESCPOSTAZIONE = p.Postazione != null ? p.Postazione.Nome : "Nessuna",
+            TIPOPOSTAZIONE = p.Postazione != null ? p.Postazione.TipoPostazioneId : 0
         };
 
         public static Expression<Func<Permesso, PostazioneMap>> ToPostazioneMap => p => new PostazioneMap
         {
             Id = p.Id,
+            // Attenzione: qui mappi PostazioneId su CodiceTipoPostazione, 
+            // verifica che non debba essere p.Postazione.TipoPostazioneId
             CodiceTipoPostazione = p.PostazioneId,
-            NomePostazione = p.Postazione!.Nome
+            NomePostazione = p.Postazione != null ? p.Postazione.Nome : "N/A"
         };
 
-        //public static PostazioneXC ToPostazioneXC(Permesso p)
-        //{
-        //    return new PostazioneXC
-        //    {
-        //        // Usiamo l'operatore ?. perché Postazione è nullable nel modello
-        //        CODICEPOSTAZIONE = p.PostazioneId,
-        //        DESCPOSTAZIONE = p.Postazione?.Nome ?? "Postazione Sconosciuta",
-        //        TIPOPOSTAZIONE = p.Postazione!.TipoPostazioneId
-        //        // ... altri campi ...
-        //    };
-        //}
+        
     }
 }

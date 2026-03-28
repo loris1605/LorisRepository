@@ -32,13 +32,22 @@ namespace Models.Mappers
         (o, p) => new PostazioneMap
         {
             Id = o.Id,
-            CodiceTipoPostazione = o.TipoPostazione!.Id,
+            // Protezione su TipoPostazione
+            CodiceTipoPostazione = o.TipoPostazione != null ? o.TipoPostazione.Id : 0,
             NomePostazione = o.Nome,
-            NomeTipoPostazione = o.TipoPostazione!.Nome,
+            NomeTipoPostazione = o.TipoPostazione != null ? o.TipoPostazione.Nome : "N/A",
+        
+            // Protezione su Reparto
             CodiceReparto = p != null ? p.Id : 0,
-            NomeSettore = p!.Settore!.Nome ?? "Nessuna",
-            EtichettaSettore = p!.Settore!.Label ?? "Nessuna",
-            NomeTipoSettore = p!.Settore!.TipoSettore!.Nome ?? "N/A"
+        
+            // Protezione a cascata su Settore (p -> p.Settore)
+            NomeSettore = (p != null && p.Settore != null) ? p.Settore.Nome : "Nessuno",
+            EtichettaSettore = (p != null && p.Settore != null) ? p.Settore.Label : "Nessuna",
+        
+            // Protezione profonda (p -> p.Settore -> p.Settore.TipoSettore)
+            NomeTipoSettore = (p != null && p.Settore != null && p.Settore.TipoSettore != null)
+                              ? p.Settore.TipoSettore.Nome
+                              : "N/A"
         };
 
         public static Expression<Func<Postazione, PostazioneMap>> ToSimplePostazioneMap => o => 

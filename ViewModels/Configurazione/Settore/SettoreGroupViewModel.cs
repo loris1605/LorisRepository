@@ -1,14 +1,9 @@
 ﻿using Models.Entity;
 using Models.Repository;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModels
 {
@@ -40,14 +35,7 @@ namespace ViewModels
             this.WhenActivated(d =>
             {
 
-                var canDel = this.WhenAnyValue(
-                           x => x.GroupBindingT.CodiceListino, // Monitora la proprietà specifica
-                           x => x.GroupBindingT.Id,             // Monitora l'Id
-                           (permesso, id) =>
-                               this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
-                               permesso == 0 &&
-                               id != -1);
-
+                
                 //var canSocioUpd = this.WhenAnyValue(
                 //            x => x.GroupBindingT.CodiceSocio,
                 //            (codice) => codice != 0);
@@ -89,7 +77,6 @@ namespace ViewModels
             });
 
 
-
         }
 
         private async Task OnDel()
@@ -99,7 +86,7 @@ namespace ViewModels
                 configurazioneHost.GroupEnabled = false;
                 await configurazioneHost.ConfigurazioneInputRouter
                     .Navigate
-                    .Execute(new PostazioneDelViewModel(configurazioneHost, GroupBindingT.Id));
+                    .Execute(new SettoreDelViewModel(configurazioneHost, GroupBindingT.Id));
             }
         }
 
@@ -110,7 +97,7 @@ namespace ViewModels
                 configurazioneHost.GroupEnabled = false;
                 await configurazioneHost.ConfigurazioneInputRouter
                     .Navigate
-                    .Execute(new PostazioneUpdViewModel(configurazioneHost, GroupBindingT.Id));
+                    .Execute(new SettoreUpdViewModel(configurazioneHost, GroupBindingT.Id));
             }
         }
 
@@ -121,7 +108,7 @@ namespace ViewModels
                 configurazioneHost.GroupEnabled = false;
                 await configurazioneHost.ConfigurazioneInputRouter
                     .Navigate
-                    .Execute(new PostazioneAddViewModel(configurazioneHost));
+                    .Execute(new SettoreAddViewModel(configurazioneHost));
             }
         }
 

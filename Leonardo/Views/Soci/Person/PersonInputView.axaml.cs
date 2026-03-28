@@ -80,15 +80,9 @@ public partial class PersonInputView : ReactiveUserControl<PersonInputBase>
                     })
                     .DisposeWith(d);
 
-                ViewModel?.EscFocus
-                    .RegisterHandler(interaction =>
-                    {
-                        Dispatcher.UIThread.Post(() =>
-                        {
-                            EsciButton.Focus();
-                        });
-                        interaction.SetOutput(Unit.Default);
-                    })
+            this.OneWayBind(ViewModel,
+                    vm => vm.EscFocus,
+                    view => view.InputSaveBox.EscFocus)
                     .DisposeWith(d);
 
             // Esc Key Pressed
@@ -180,13 +174,13 @@ public partial class PersonInputView : ReactiveUserControl<PersonInputBase>
 
             #region Commands
 
-            this.BindCommand(ViewModel,
-                             vm => vm.EscPressedCommand,
-                             v => v.EsciButton).DisposeWith(d);
+            this.Bind(ViewModel,
+                    vm => vm.EscPressedCommand,
+                    v => v.InputSaveBox.ExitCommand).DisposeWith(d);
 
-            this.BindCommand(ViewModel,
-                             vm => vm.SaveCommand,
-                             v => v.SalvaButton).DisposeWith(d);
+            this.Bind(ViewModel,
+                vm => vm.SaveCommand,
+                v => v.InputSaveBox.SaveCommand).DisposeWith(d);
 
 
             #endregion

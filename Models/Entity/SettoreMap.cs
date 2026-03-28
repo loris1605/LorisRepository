@@ -16,7 +16,7 @@ namespace Models.Entity
 
         public override string Nome => NomeSettore;
 
-        public new string? Titolo => $"{NomeSettore} - {NomeTipoSettore}";
+        public override string? Titolo => $"{NomeSettore} - {NomeTipoSettore}";
 
         public Settore ToTable() => Mappers.SettoreMapper.ToTable(this);
 
@@ -24,7 +24,7 @@ namespace Models.Entity
         {
             // Aggiorniamo solo i campi che possono cambiare
             existing.Nome = this.NomeSettore;
-            existing.Label = this.EtichettaTariffa;
+            existing.Label = this.EtichettaSettore;
             existing.TipoSettoreId = this.CodiceTipoSettore;
 
             // Non tocchiamo l'ID!

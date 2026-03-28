@@ -4,18 +4,18 @@ using SysNet;
 
 namespace ViewModels
 {
-    public class OperatoreDelViewModel : OperatoreInputBase
+    public class SettoreDelViewModel : SettoreInputBase
     {
-        private OperatoreR Q { get; set; }
+        private SettoreR Q { get; set; }
+
         private readonly int _idDaModificare;
 
-        public OperatoreDelViewModel(IScreen host, int idoperatore) : base(host)
+        public SettoreDelViewModel(IScreen host, int idsettore) : base(host)
         {
-            _idDaModificare = idoperatore;
-
-            Titolo = "Cancella Operatore";
-            
-            Q = Create<OperatoreR>.Instance();
+            _idDaModificare = idsettore;
+            Titolo = "Cancella Settore";
+            Q = Create<SettoreR>.Instance();
+            FieldsEnabled = false;
         }
 
         protected override void OnFinalDestruction()
@@ -26,10 +26,11 @@ namespace ViewModels
 
         protected override async Task OnLoading()
         {
+            TipoSettDataSource = await Q.LoadTipiSettore();
             BindingT = await Q.GetById(_idDaModificare);
-            if (GetCodiceOperatore == 0)
+            if (GetCodiceSettore == 0)
             {
-                InfoLabel = "Errore: Operatore non trovato nel database.";
+                InfoLabel = "Errore: Settore non trovato nel database.";
                 FieldsEnabled = false;
             }
             await OnFocus(EscFocus);
@@ -39,11 +40,12 @@ namespace ViewModels
         {
             if (!await Q.Del(BindingT))
             {
-                InfoLabel = "Errore Db eliminazione operatore";
+                InfoLabel = "Errore Db eliminazione Settore";
                 await OnEscFocus();
                 return;
             }
             OnBack(-100);
         }
+
     }
 }

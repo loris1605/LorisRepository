@@ -51,36 +51,42 @@ namespace SysNet.Converters
 
         public static DateTime DateIntToDate(this int intData)
         {
-            // Validazione immediata (formato YYYYMMDD deve avere 8 cifre)
-            if (intData < 19000101 || intData > 21001231) return DateTime.MinValue;
+            // 1. Gestione esplicita dello zero (evita log inutili o controlli range)
+            if (intData == 0) return DateTime.MinValue;
 
-            // Estraiamo i numeri direttamente senza passare dalle stringhe (più veloce)
+            // 2. Controllo range (abbiamo allargato un po' per sicurezza storica)
+            if (intData < 17530101 || intData > 99991231) return DateTime.MinValue;
+
             int year = intData / 10000;
             int month = (intData % 10000) / 100;
             int day = intData % 100;
 
+            // 3. Validazione dei componenti prima del costruttore (opzionale ma pulito)
+            if (month < 1 || month > 12 || day < 1 || day > 31) return DateTime.MinValue;
+
             try
             {
-                // DateTime constructor è più veloce di TryParse
                 return new DateTime(year, month, day);
             }
             catch
             {
-                // Se il numero è 20240230 (30 febbraio), il costruttore fallisce
+                // Gestisce casi come il 29 febbraio in anni non bisestili
                 return DateTime.MinValue;
             }
         }
 
 
 
+
         public static int DateTimeToIntDate(this DateTime date)
         {
-            // Se la data è MinValue o non valida per il tuo range, restituisce 0
-            if (date == DateTime.MinValue || date.Year < 1900 || date.Year > 2100) return 0;
+            // Aggiungi il controllo per DateTime.MaxValue se capita di usare date di fine validità lontane
+            if (date == DateTime.MinValue || date == DateTime.MaxValue || date.Year < 1900 || date.Year > 2100)
+                return 0;
 
-            // Esempio: 2024 * 10000 + 5 * 100 + 20 = 20240520
             return (date.Year * 10000) + (date.Month * 100) + date.Day;
         }
+
 
         public static int DateTimeToIntDate(this DateTime? date)
         {

@@ -6,11 +6,14 @@ namespace Models.Mappers
 {
     public static class RepartoMapper
     {
-        public static Expression<Func<Reparto, SettoreXC>> ToSettoreXC => p => new SettoreXC
+        public static Expression<Func<Reparto, SettoreXC>> ToSettoreXC => r => new SettoreXC
         {
-            CODICESETTORE = p.SettoreId,
-            DESCSETTORE = p.Settore!.Label!,
-            NOMESETTORE = p.Settore.Nome!
+            // Usiamo l'ID direttamente dal Reparto (FK) per sicurezza
+            CODICESETTORE = r.SettoreId,
+
+            // Protezione contro i null per le proprietà di navigazione
+            DESCSETTORE = r.Settore != null ? r.Settore.Label : "DESCRIZIONE MANCANTE",
+            NOMESETTORE = r.Settore != null ? r.Settore.Nome : "SETTORE NON ASSEGNATO"
         };
     }
 }
