@@ -19,6 +19,7 @@ namespace ViewModels
         {
             FilterCommand = ReactiveCommand.CreateFromTask(OnCancelFilter);
             PostazioniCommand = ReactiveCommand.CreateFromTask(OnGoToPosizioni);
+            SettoriCommand = ReactiveCommand.CreateFromTask(OnGoToSettori);
             UpdCommand = ReactiveCommand.CreateFromTask(OnUpd);
 
             DelCommand = ReactiveCommand.CreateFromTask(
@@ -58,6 +59,7 @@ namespace ViewModels
                 UpdCommand.DisposeWith(d);
                 DelCommand.DisposeWith(d);
                 PostazioniCommand.DisposeWith(d);
+                SettoriCommand.DisposeWith(d);
 
                 //DelCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnDelCodiceSocio, canSocioDel)
                 //.DisposeWith(d);
@@ -123,6 +125,16 @@ namespace ViewModels
                 await configurazioneHost.ConfigurazioneRouter
                     .NavigateAndReset
                     .Execute(new PostazioneGroupViewModel(configurazioneHost));
+            }
+        }
+
+        private async Task OnGoToSettori()
+        {
+            if (HostScreen is IConfigurazioneScreen configurazioneHost)
+            {
+                await configurazioneHost.ConfigurazioneRouter
+                    .NavigateAndReset
+                    .Execute(new SettoreGroupViewModel(configurazioneHost));
             }
         }
     }

@@ -117,6 +117,10 @@ namespace Leonardo
                         new PostazioneInputView(), typeof(IViewFor<PostazioneUpdViewModel>));
 
 
+            Locator.CurrentMutable.Register(() =>
+                        new SettoreGroupView(), typeof(IViewFor<SettoreGroupViewModel>));
+
+
             #endregion
 
 

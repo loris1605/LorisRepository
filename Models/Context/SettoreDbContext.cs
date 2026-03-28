@@ -1,14 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models.Tables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Models.Context
 {
-    public class SettoreDbContext : DbContext
+    public class SettoreDbContext : BaseContext
     {
         public DbSet<Settore> Settori { get; set; } = null!;
         public DbSet<Listino> Listini { get; set; } = null!;

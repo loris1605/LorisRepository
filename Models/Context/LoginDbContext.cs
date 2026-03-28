@@ -3,7 +3,7 @@ using Models.Tables;
 
 namespace Models.Context
 {
-    public class LoginDbContext : DbContext
+    public class LoginDbContext : BaseContext
     {
         public DbSet<Person> People { get; set; } = null!;
         public DbSet<Operatore> Operatori { get; set; } = null!;

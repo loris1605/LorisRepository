@@ -9,23 +9,20 @@ using ViewModels;
 
 namespace Leonardo;
 
-public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupViewModel>
+public partial class SettoreGroupView : ReactiveUserControl<SettoreGroupViewModel>
 {
-    public OperatoreGroupView()
+    public SettoreGroupView()
     {
         InitializeComponent();
 
         this.WhenActivated(d =>
         {
-            if (OperatoreDataGrid != null)
+            if (SettoreDataGrid != null)
             {
-                OperatoreDataGrid.LoadingRowGroup += OnLoadingRowGroup;
-
-                Disposable.Create(() => OperatoreDataGrid.LoadingRowGroup -= OnLoadingRowGroup)
+                SettoreDataGrid.LoadingRowGroup += OnLoadingRowGroup;
+                Disposable.Create(() => SettoreDataGrid.LoadingRowGroup -= OnLoadingRowGroup)
                     .DisposeWith(d);
             }
-
-
             // Enter Key Pressed
 
             #region TwoWay
@@ -72,21 +69,21 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
             this.BindCommand(ViewModel,
                 vm => vm.DelCommand,
                 v => v.DelButton)
-                .DisposeWith(d);
+            .DisposeWith(d);
 
             this.BindCommand(ViewModel,
                 vm => vm.FilterCommand,
                 v => v.CancelFilterButton)
+            .DisposeWith(d);
+
+            this.BindCommand(ViewModel,
+                vm => vm.OperatoriCommand,
+                v => v.OperatoriButton)
                 .DisposeWith(d);
 
             this.BindCommand(ViewModel,
                 vm => vm.PostazioniCommand,
                 v => v.PostazioniButton)
-                .DisposeWith(d);
-
-            this.BindCommand(ViewModel,
-                vm => vm.SettoriCommand,
-                v => v.SettoriButton)
                 .DisposeWith(d);
 
             //this.BindCommand(ViewModel,
@@ -116,11 +113,11 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
 
             #endregion
 
+
             Disposable.Create(() => {
                 this.DataContext = null;
-                System.Diagnostics.Debug.WriteLine(">>> [VIEW] OperatoreGroupView deattivata, DataContext rimosso.");
+                System.Diagnostics.Debug.WriteLine(">>> [VIEW] SettoreGroupView deattivata, DataContext rimosso.");
             }).DisposeWith(d);
-
         });
     }
 
@@ -132,7 +129,7 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
             // Il secondo parametro 'false' indica "NON espandere" -> quindi CHIUDI
             Dispatcher.UIThread.Post(() =>
             {
-               grid.CollapseRowGroup(group, true);
+                grid.CollapseRowGroup(group, true);
             }, DispatcherPriority.Render);
         }
     }

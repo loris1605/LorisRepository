@@ -83,6 +83,11 @@ public partial class PostazioneGroupView : ReactiveUserControl<PostazioneGroupVi
                 v => v.OperatoriButton)
                 .DisposeWith(d);
 
+            this.BindCommand(ViewModel,
+                vm => vm.SettoriCommand,
+                v => v.SettoriButton)
+                .DisposeWith(d);
+
             //this.BindCommand(ViewModel,
             //    vm => vm.DelCodiceSocioCommand,
             //    v => v.DelSocioButton)

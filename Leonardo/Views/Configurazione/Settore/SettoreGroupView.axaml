@@ -1,0 +1,237 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:ViewModels"
+             xmlns:ui="using:ControlStyles"
+             xmlns:r="using:ReactiveUI.Avalonia"
+             KeyboardNavigation.TabNavigation="Cycle"
+             Background="Transparent"
+             x:CompileBindings="False"
+             x:Class="Leonardo.SettoreGroupView">
+
+    <Grid x:Name="MainGrid">
+    
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="150"/>
+        </Grid.ColumnDefinitions>    
+    
+        <UniformGrid Columns="4" Grid.ColumnSpan="2">
+        
+            <ui:UiButton x:Name="AddButton"
+                         Margin="20,0"
+                         DockPanel.Dock="Top"
+                         Background="Transparent"
+                         ToolTipText="AGGIUNGI SETTORE"
+                         HorizontalAlignment="Left">
+                
+                    <Image Source="avares://ControlStyles/Resources/AddSocioIcon.png" Width="30" Height="30" />
+                        
+		
+            </ui:UiButton>
+
+            <ui:UiButton x:Name="UpdButton"
+                         Margin="20,0"
+                         DockPanel.Dock="Top"
+                         ToolTipText="MODIFICA SETTORE"
+                         HorizontalAlignment="Left">
+				
+                <Image Source="avares://ControlStyles/Resources/ModificaIcon.png" Width="30" Height="30" />
+
+            </ui:UiButton>
+
+            <ui:UiButton x:Name="DelButton"
+                         MinWidth="50"
+                         Margin="20,0"
+                         DockPanel.Dock="Top"
+                         ToolTipText="ELIMINA SETTORE"
+                         HorizontalAlignment="Left">
+                
+                <Image Source="avares://ControlStyles/Resources/CancellaIcon.png" Width="30" Height="30" />
+
+            </ui:UiButton>
+
+            <ui:UiButton x:Name="CancelFilterButton"
+                         MinWidth="50"
+                         Margin="20,0"
+                         DockPanel.Dock="Top"
+                         ToolTipText="CANCELLA FILTRO"
+                         HorizontalAlignment="Left">
+
+                <Image Source="avares://ControlStyles/Resources/AnnullaIcon.png" Width="30" Height="30" />
+
+            </ui:UiButton>
+
+                    
+        </UniformGrid>
+
+        <HeaderedContentControl BorderBrush="Black" 
+                                Grid.Row="1" 
+                                HorizontalAlignment="Stretch" 
+                                VerticalAlignment="Stretch"
+                                Name="Group"
+                                BorderThickness="1"
+                                CornerRadius="5"
+                                Margin="3"
+                                Background="Transparent">
+
+            
+            <HeaderedContentControl.Header>
+                <TextBlock Text=" Settori " 
+                           Foreground="Black" 
+                           Margin="3"
+                           HorizontalAlignment="Center"/>
+            </HeaderedContentControl.Header>
+
+            <DataGrid ItemsSource="{Binding GroupedDataSource}"
+                      x:CompileBindings="False"
+                      x:Name="SettoreDataGrid"
+                      SelectedItem="{Binding GroupBindingT}"
+                      SelectedIndex="{Binding IdIndex}"
+                      
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      CanUserSortColumns="True"
+                      IsReadOnly="True"
+                      GridLinesVisibility="All"
+                      Margin="20">
+
+                <DataGrid.Resources>
+					
+                    <DataTemplate x:Key="CodiceListinoTemplate" x:CompileBindings="False">
+                        <TextBlock Text="{Binding CodiceListino}" 
+                                   Margin="10,0"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                    </DataTemplate>
+                    <DataTemplate x:Key="NomeTariffaTemplate" x:CompileBindings="False">
+                        <TextBlock Text="{Binding NomeTariffa}" 
+                                   VerticalAlignment="Center"
+                                   Margin="10,0"
+                                   HorizontalAlignment="Center"/>
+                    </DataTemplate>
+                    <DataTemplate x:Key="EtichettaTariffaTemplate" x:CompileBindings="False">
+                        <TextBlock Text="{Binding EtichettaTariffa}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0"
+                                   HorizontalAlignment="Center"/>
+                    </DataTemplate>
+                    <DataTemplate x:Key="PrezzoTariffaTemplate" x:CompileBindings="False">
+                        <TextBlock Text="{Binding PrezzoTariffa}"
+                                   VerticalAlignment="Center"
+                                   Margin="10,0"
+                                   HorizontalAlignment="Center"/>
+                    </DataTemplate>
+                    
+                </DataGrid.Resources>
+            
+                <DataGrid.Styles>
+                    <Style Selector="DataGridColumnHeader">
+                        <Setter Property="FontSize" Value="11" />
+                        <Setter Property="FontWeight" Value="SemiBold" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                    <Style Selector="DataGridRowGroupHeader">
+                        <Setter Property="Background" Value="#F2F2F2" />
+                        <Setter Property="Height" Value="30" />
+                    </Style>
+                    
+                </DataGrid.Styles>
+
+                <DataGrid.Columns >
+                    
+                                               
+                    <DataGridTemplateColumn Header="Cod." 
+                                            CellTemplate="{StaticResource CodiceListinoTemplate}"
+                                            IsVisible="False"/>
+
+                    <DataGridTemplateColumn Header="Tariffa" 
+                                            Width="Auto"
+                                            CellTemplate="{StaticResource NomeTariffaTemplate}"/>
+
+                    <DataGridTemplateColumn Header="Etichetta" 
+                                            Width="Auto"
+                                            CellTemplate="{StaticResource EtichettaTariffaTemplate}"/>
+                    
+                    <DataGridTemplateColumn Header="Tipo" 
+                                            CellTemplate="{StaticResource PrezzoTariffaTemplate}"/>
+                    
+                    
+                </DataGrid.Columns>
+
+            </DataGrid>
+               
+        </HeaderedContentControl>
+
+        <StackPanel Grid.Column="1" Orientation="Vertical" Grid.Row="1">
+        
+            <HeaderedContentControl BorderBrush="Black" 
+                                    Grid.Row="1" Grid.Column="1"
+                                    HorizontalAlignment="Stretch" 
+                                    VerticalAlignment="Stretch"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Margin="3"
+                                    x:Name="Reparto">
+
+                <HeaderedContentControl.Header>
+                     <TextBlock Text=" Listini " 
+                                Foreground="Black"
+                                Background="Transparent"
+                                Margin="3"/>
+                </HeaderedContentControl.Header>
+
+                <ui:UiButton x:Name="RepartiButton"
+                                     MinWidth="50"
+                                     Margin="20,5"
+                                     ToolTipText="GESTIONE LISTINI"
+                                     HorizontalAlignment="Center">
+
+                    <Image Source="avares://ControlStyles/Resources/AggiungiIcon.png" Width="34" Height="34" />
+                
+                </ui:UiButton>
+
+                
+            
+            </HeaderedContentControl>
+
+            <ui:UiButton x:Name="OperatoriButton"
+                                 Margin="20,5"
+                                 ToolTipText="GRUPPO OPERATORI"
+                                 HorizontalAlignment="Stretch"
+                                 Content=" OPERATORI "/>
+
+            <ui:UiButton x:Name="PostazioniButton"
+                                 Margin="20,5"
+                                 ToolTipText="GRUPPO POSTAZIONI"
+                                 HorizontalAlignment="Stretch"
+                                 Content="SETTORI"
+                                 HorizontalContentAlignment="Center"/>
+
+            <ui:UiButton x:Name="TariffeButton"
+                                 Margin="20,5"
+                                 ToolTipText="GRUPPO TARIFFE"
+                                 HorizontalAlignment="Stretch"
+                                 Content="TARIFFE"
+                                 HorizontalContentAlignment="Center"/>
+
+            <ui:UiButton x:Name="RientriButton"
+                                 Margin="20,5"
+                                 ToolTipText="GRUPPO RIENTRI"
+                                 HorizontalAlignment="Stretch"
+                                 Content="RIENTRI"
+                                 HorizontalContentAlignment="Center"/>
+        
+        </StackPanel>
+
+    
+    </Grid>
+  
+</UserControl>

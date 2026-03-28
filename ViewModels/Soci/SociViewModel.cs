@@ -19,14 +19,13 @@ namespace ViewModels
         public RoutingState SociInputRouter { get; } = new RoutingState();
         public RoutingState Router => SociRouter;
 
-        public ReactiveCommand<Unit, IRoutableViewModel> EsciCommand { get; }
+        public ReactiveCommand<Unit, Unit> EsciCommand { get; }
           
 
         public SociViewModel(IScreen host) : base(host)
         {
-            EsciCommand = ReactiveCommand.CreateFromObservable(() =>
-                        HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen)));
-            
+            EsciCommand = ReactiveCommand.Create(OnGoToMenu);
+
         }
 
         protected override void OnFinalDestruction()
@@ -40,7 +39,11 @@ namespace ViewModels
             await SociRouter.NavigateAndReset.Execute(new PersonGroupViewModel(this));
         }
 
-        
+        private void OnGoToMenu()
+        {
+            HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen));
+        }
+
 
         public void AggiornaGrid(object model)
         {
