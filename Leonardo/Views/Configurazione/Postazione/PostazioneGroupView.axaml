@@ -6,6 +6,7 @@
              xmlns:vm="using:ViewModels"
              xmlns:ui="using:ControlStyles"
              xmlns:r="using:ReactiveUI.Avalonia"
+             xmlns:lc="using:Leonardo"
              KeyboardNavigation.TabNavigation="Cycle"
              Background="Transparent"
              x:CompileBindings="False"
@@ -21,56 +22,14 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="150"/>
-        </Grid.ColumnDefinitions>    
-    
-        <UniformGrid Columns="4" Grid.ColumnSpan="2">
+        </Grid.ColumnDefinitions>   
         
-            <ui:UiButton x:Name="AddButton"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         Background="Transparent"
-                         ToolTipText="AGGIUNGI POSTAZIONE"
-                         HorizontalAlignment="Left">
-                
-                    <Image Source="avares://ControlStyles/Resources/AddSocioIcon.png" Width="30" Height="30" />
-                        
-		
-            </ui:UiButton>
-
-            <ui:UiButton x:Name="UpdButton"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         ToolTipText="MODIFICA POSTAZIONE"
-                         HorizontalAlignment="Left">
-				
-                <Image Source="avares://ControlStyles/Resources/ModificaIcon.png" Width="30" Height="30" />
-
-            </ui:UiButton>
-
-            <ui:UiButton x:Name="DelButton"
-                         MinWidth="50"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         ToolTipText="ELIMINA POSTAZIONE"
-                         HorizontalAlignment="Left">
-                
-                <Image Source="avares://ControlStyles/Resources/CancellaIcon.png" Width="30" Height="30" />
-
-            </ui:UiButton>
-
-            <ui:UiButton x:Name="CancelFilterButton"
-                         MinWidth="50"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         ToolTipText="CANCELLA FILTRO"
-                         HorizontalAlignment="Left">
-
-                <Image Source="avares://ControlStyles/Resources/AnnullaIcon.png" Width="30" Height="30" />
-
-            </ui:UiButton>
-
-                    
-        </UniformGrid>
+        <lc:CrudToolBar x:Name="CrudBar"
+                        GroupText="POSTAZIONE"
+                        Grid.ColumnSpan="2"
+                        FilterCommandVisibile="False"/>
+    
+        
 
         <HeaderedContentControl BorderBrush="Black" 
                                 Grid.Row="1" 

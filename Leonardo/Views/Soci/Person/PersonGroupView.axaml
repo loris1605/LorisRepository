@@ -30,66 +30,10 @@
         </Grid.ColumnDefinitions>
 
         <lc:CrudToolBar x:Name="CrudBar"
-                        Grid.ColumnSpan="2"/>
-
-        <!--<UniformGrid Columns="5" Grid.ColumnSpan="2">
-        
-            <ui:UiButton x:Name="AddButton"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         Background="Transparent"
-                         ToolTipText="AGGIUNGI SOCIO"
-                         HorizontalAlignment="Left">
-                
-                    <Image Source="avares://ControlStyles/Resources/AddSocioIcon.png" Width="30" Height="30" />
-                        
-		
-            </ui:UiButton>
-
-            <ui:UiButton x:Name="UpdButton"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         ToolTipText="MODIFICA SOCIO"
-                         HorizontalAlignment="Left">
-				
-                <Image Source="avares://ControlStyles/Resources/ModificaIcon.png" Width="30" Height="30" />
-
-            </ui:UiButton>
-
-            <ui:UiButton x:Name="DelButton"
-                         MinWidth="50"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         ToolTipText="ELIMINA SOCIO"
-                         HorizontalAlignment="Left">
-                
-                <Image Source="avares://ControlStyles/Resources/CancellaIcon.png" Width="30" Height="30" />
-
-            </ui:UiButton>
-
-            <ui:UiButton x:Name="CancelFilterButton"
-                         MinWidth="50"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         ToolTipText="CANCELLA FILTRO"
-                         HorizontalAlignment="Left">
-
-                <Image Source="avares://ControlStyles/Resources/AnnullaIcon.png" Width="30" Height="30" />
-
-            </ui:UiButton>
-
-            <ui:UiButton x:Name="FilterButton"
-                         MinWidth="50"
-                         Margin="20,0"
-                         DockPanel.Dock="Top"
-                         ToolTipText="CERCA SOCIO"
-                         HorizontalAlignment="Left">
-
-                <Image Source="avares://ControlStyles/Resources/SearchIcon.png" Width="30" Height="30" />
-
-            </ui:UiButton>
-        
-        </UniformGrid>-->
+                        GroupText="SOCI"
+                        Grid.ColumnSpan="2"
+                        FilterCommandVisibile="True"/>
+    
 
         <HeaderedContentControl BorderBrush="Black" 
                                 Grid.Row="1" 

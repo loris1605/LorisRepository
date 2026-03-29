@@ -39,13 +39,13 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
 
             this.OneWayBind(ViewModel,
                     vm => vm.EnabledButton,
-                    v => v.UpdButton.IsEnabled,
+                    v => v.CrudBar.UpdButton.IsEnabled,
                     l => l)
             .DisposeWith(d);
 
             this.OneWayBind(ViewModel,
                     vm => vm.EnabledButton,
-                    v => v.DelButton.IsEnabled,
+                    v => v.CrudBar.DelButton.IsEnabled,
                     l => l)
             .DisposeWith(d);
 
@@ -59,24 +59,24 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
 
             #region Commands
 
-            this.BindCommand(ViewModel,
+            this.Bind(ViewModel,
                 vm => vm.AddCommand,
-                v => v.AddButton)
-                .DisposeWith(d);
+                v => v.CrudBar.AddCommand)
+            .DisposeWith(d);
 
-            this.BindCommand(ViewModel,
+            this.Bind(ViewModel,
                 vm => vm.UpdCommand,
-                v => v.UpdButton)
-                .DisposeWith(d);
+                v => v.CrudBar.UpdCommand)
+            .DisposeWith(d);
 
             this.BindCommand(ViewModel,
                 vm => vm.DelCommand,
-                v => v.DelButton)
+                v => v.CrudBar.DelButton)
                 .DisposeWith(d);
 
             this.BindCommand(ViewModel,
                 vm => vm.FilterCommand,
-                v => v.CancelFilterButton)
+                v => v.CrudBar.CancelCommand)
                 .DisposeWith(d);
 
             this.BindCommand(ViewModel,

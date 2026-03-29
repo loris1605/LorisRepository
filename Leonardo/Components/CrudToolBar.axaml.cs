@@ -1,10 +1,7 @@
 using Avalonia;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
-using System;
 using System.Reactive;
-using System.Reactive.Disposables.Fluent;
-using System.Windows.Input;
 using ViewModels;
 
 namespace Leonardo;
@@ -17,21 +14,7 @@ public partial class CrudToolBar : ReactiveUserControl<BaseViewModel>
 
         this.WhenActivated(d =>
         {
-            this.GetObservable(GroupTextProperty)
-                .Subscribe(testo =>
-                {
-                    string suffisso = string.IsNullOrWhiteSpace(testo) ? "ELEMENTO" : testo.ToUpper();
-
-                    // Aggiorna i ToolTip di ogni bottone
-                    AddButton.ToolTipText = $"AGGIUNGI {suffisso}";
-                    UpdButton.ToolTipText = $"MODIFICA {suffisso}";
-                    DelButton.ToolTipText = $"ELIMINA {suffisso}";
-                    CancelFilterButton.ToolTipText = $"CANCELLA FILTRO {suffisso}";
-                    FilterButton.ToolTipText = $"CERCA {suffisso}";
-
-                    System.Diagnostics.Debug.WriteLine($"Tooltips aggiornati per: {suffisso}"); 
-                })
-                .DisposeWith(d);
+            
         });
     }
 

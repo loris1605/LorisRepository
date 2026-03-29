@@ -36,15 +36,18 @@ namespace ControlStyles
 
         private void ToolTipTextChanged(UiButton titolo, AvaloniaPropertyChangedEventArgs args)
         {
-            if (ToolTipText != string.Empty)
+            // Recupera il nuovo valore dagli argomenti dell'evento
+            var newValue = args.GetNewValue<string>();
+
+            if (!string.IsNullOrWhiteSpace(newValue))
             {
-                ToolTip.SetTip(titolo, ToolTipText);
+                // Imposta il ToolTip solo sull'istanza 'titolo'
+                ToolTip.SetTip(titolo, newValue);
             }
             else
             {
                 titolo.ClearValue(ToolTip.TipProperty);
             }
-
         }
 
         #endregion
