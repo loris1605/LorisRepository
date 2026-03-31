@@ -17,5 +17,6 @@
     <StyleInclude Source="avares://ControlStyles/Menu/MenuStyles.axaml"/>
     <StyleInclude Source="avares://ControlStyles/GroupBox/GroupBoxStyles.axaml"/>
     <StyleInclude Source="avares://ControlStyles/DatePicker/DatePickerStyles.axaml"/>
+    <StyleInclude Source="avares://ControlStyles/DataGrid/DataGridStyles.axaml"/>
     
 </Styles>

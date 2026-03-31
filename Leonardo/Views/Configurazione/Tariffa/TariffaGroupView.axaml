@@ -4,14 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="using:ViewModels"
-             xmlns:vmdt="using:ViewModels.DataTypes"
              xmlns:ui="using:ControlStyles"
+             xmlns:r="using:ReactiveUI.Avalonia"
              xmlns:lc="using:Leonardo"
              KeyboardNavigation.TabNavigation="Cycle"
              Background="Transparent"
-             x:DataType="vm:SettoreGroupViewModel"
+             x:DataType="vm:TariffaGroupViewModel"
              x:CompileBindings="True"
-             x:Class="Leonardo.SettoreGroupView">
+             x:Class="Leonardo.TariffaGroupView">
 
     <Grid x:Name="MainGrid">
     
@@ -24,17 +24,15 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>    
-
+    
         <lc:CrudToolBar x:Name="CrudBar"
-                        GroupText="SETTORE"
+                        GroupText="TARIFFA"
                         Grid.ColumnSpan="2"
                         FilterCommandVisibile="False"
                         AddCommand="{Binding AddCommand}"
                         DelCommand="{Binding DelCommand}"
                         UpdCommand="{Binding UpdCommand}"
                         CancelFilterCommand="{Binding FilterCommand}"/>
-    
-        
 
         <HeaderedContentControl BorderBrush="Black" 
                                 Grid.Row="1" 
@@ -45,105 +43,88 @@
                                 CornerRadius="5"
                                 Margin="3"
                                 Background="Transparent">
-
-            
+        
             <HeaderedContentControl.Header>
-                <TextBlock Text=" Settori " 
+                <TextBlock Text=" Tariffe " 
                            Foreground="Black" 
                            Margin="3"
                            HorizontalAlignment="Center"/>
             </HeaderedContentControl.Header>
 
-
-            <DataGrid ItemsSource="{Binding GroupedDataSource}"
-                      Classes="Group"
-                      x:Name="SettoreDataGrid"
+            <DataGrid ItemsSource="{Binding DataSource}"
+                      x:Name="TariffaDataGrid"
                       SelectedItem="{Binding GroupBindingT}"
-                      SelectedIndex="{Binding IdIndex}">
+                      SelectedIndex="{Binding IdIndex}"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      CanUserSortColumns="True"
+                      IsReadOnly="True"
+                      GridLinesVisibility="All"
+                      Margin="20">
+           
+   
+                <DataGrid.Styles>
+                    <Style Selector="DataGridColumnHeader">
+                        <Setter Property="FontSize" Value="11" />
+                        <Setter Property="FontWeight" Value="SemiBold" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                    <Style Selector="DataGridRowGroupHeader">
+                        <Setter Property="Background" Value="#F2F2F2" />
+                        <Setter Property="Height" Value="30" />
+                    </Style>
+                    
+                </DataGrid.Styles>
 
                 <DataGrid.Columns >
-                  
+                    
                     <DataGridTextColumn Header="Cod." 
-                                        x:DataType="vmdt:SettoreMapDataType"
-                                        Binding="{Binding CodiceListino}" 
+                                        Binding="{Binding Id}" 
                                         IsVisible="False" />
 
                     <DataGridTextColumn Header="Nome" 
-                                        x:DataType="vmdt:SettoreMapDataType"
                                         Binding="{Binding NomeTariffa}" 
                                         Width="Auto" />
-
+                                               
                     <DataGridTextColumn Header="Etichetta" 
-                                        x:DataType="vmdt:SettoreMapDataType"
                                         Binding="{Binding EtichettaTariffa}" 
                                         Width="Auto" />
 
                     <DataGridTextColumn Header="Prezzo" 
-                                        x:DataType="vmdt:SettoreMapDataType"
                                         Binding="{Binding PrezzoTariffa, StringFormat={}{0:C}}" 
                                         Width="Auto" />
                     
-                    
                 </DataGrid.Columns>
-
+            
             </DataGrid>
-               
+
+        
         </HeaderedContentControl>
 
         <StackPanel Grid.Column="1" Orientation="Vertical" Grid.Row="1">
         
-            <HeaderedContentControl BorderBrush="Black" 
-                                    Grid.Row="1" Grid.Column="1"
-                                    HorizontalAlignment="Stretch" 
-                                    VerticalAlignment="Stretch"
-                                    BorderThickness="1"
-                                    CornerRadius="5"
-                                    Margin="3"
-                                    x:Name="Reparto">
-
-                <HeaderedContentControl.Header>
-                     <TextBlock Text=" Listini " 
-                                Foreground="Black"
-                                Background="Transparent"
-                                Margin="3"/>
-                </HeaderedContentControl.Header>
-
-                <ui:UiButton x:Name="RepartiButton"
-                                     MinWidth="50"
-                                     Margin="20,5"
-                                     ToolTipText="GESTIONE LISTINI"
-                                     HorizontalAlignment="Center">
-
-                    <Image Source="avares://ControlStyles/Resources/AggiungiIcon.png" Width="34" Height="34" />
-                
-                </ui:UiButton>
-
-                
-            
-            </HeaderedContentControl>
-
             <ui:UiButton x:Name="OperatoriButton"
                                  Margin="20,5"
                                  ToolTipText="GRUPPO OPERATORI"
                                  HorizontalAlignment="Stretch"
-                                 Content=" OPERATORI "
+                                 Content="TARIFFE"
+                                 HorizontalContentAlignment="Center"
                                  Command="{Binding OperatoriCommand}"/>
 
             <ui:UiButton x:Name="PostazioniButton"
                                  Margin="20,5"
                                  ToolTipText="GRUPPO POSTAZIONI"
                                  HorizontalAlignment="Stretch"
-                                 Content="POSTAZIONI"
-                                 HorizontalContentAlignment="Center"
+                                 Content=" POSTAZIONI "
                                  Command="{Binding PostazioniCommand}"/>
 
-            <ui:UiButton x:Name="TariffeButton"
+            <ui:UiButton x:Name="SettoriButton"
                                  Margin="20,5"
-                                 ToolTipText="GRUPPO TARIFFE"
+                                 ToolTipText="GRUPPO SETTORI"
                                  HorizontalAlignment="Stretch"
-                                 Content="TARIFFE"
+                                 Content="SETTORI"
                                  HorizontalContentAlignment="Center"
-                                 Command="{Binding TariffeCommand}"/>
+                                 Command="{Binding SettoriCommand}"/>
 
             <ui:UiButton x:Name="RientriButton"
                                  Margin="20,5"
@@ -153,7 +134,6 @@
                                  HorizontalContentAlignment="Center"/>
         
         </StackPanel>
-
     
     </Grid>
   

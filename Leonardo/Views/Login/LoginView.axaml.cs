@@ -34,29 +34,18 @@ public partial class LoginView : ReactiveUserControl<LoginViewModel>
                     .DisposeWith(d);
 
             // Esc Key Pressed
-            Observable.FromEventPattern<EventHandler<KeyEventArgs>, KeyEventArgs>(
-                        h => PasswordBox.KeyUp += h,
-                        h => PasswordBox.KeyUp -= h)
-            .Where(e => e.EventArgs.Key == Key.Escape)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-            {
-                if (Application.Current?.ApplicationLifetime
-                    is IClassicDesktopStyleApplicationLifetime lifetime)
-                {
-                    lifetime.Shutdown();
-                }
-            })
-            .DisposeWith(d);
-
-            
+            Observable.FromEventPattern<KeyEventArgs>(this, nameof(this.KeyDown))
+                    .Where(e => e.EventArgs.Key == Key.Escape)
+                    .Select(_ => Unit.Default) // <--- AGGIUNGI QUESTA RIGA
+                    .InvokeCommand(ViewModel, vm => vm.AppExitCommand)
+                    .DisposeWith(d);
 
             // Enter Key Pressed
             Observable.FromEventPattern<KeyEventArgs>(PasswordBox, nameof(PasswordBox.KeyUp))
-                      .Where(e => e.EventArgs.Key == Key.Enter)
-                      .Select(_ => Unit.Default)
-                      .InvokeCommand(ViewModel?.EntraCommand)
-                      .DisposeWith(d);
+                    .Where(e => e.EventArgs.Key == Key.Enter)
+                    .Select(_ => Unit.Default) // <--- AGGIUNGI QUESTA RIGA
+                    .InvokeCommand(ViewModel, vm => vm.EntraCommand)
+            .DisposeWith(d);
 
             #region TwoWay
 
@@ -76,20 +65,12 @@ public partial class LoginView : ReactiveUserControl<LoginViewModel>
 
             #region OneWay
 
-            this.OneWayBind(ViewModel,
-                    vm => vm.EnabledEntra,
-                    v => v.EntraButton.IsEnabled,
-                    l => l)
-            .DisposeWith(d);
 
             #endregion
 
             #region Commands
 
-            this.BindCommand(ViewModel,
-                             vm => vm.EntraCommand,
-                             v => v.EntraButton).DisposeWith(d);
-
+            
             #endregion
 
             //Evento DropDownClose sulla Combo

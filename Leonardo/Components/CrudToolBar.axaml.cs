@@ -45,13 +45,13 @@ public partial class CrudToolBar : ReactiveUserControl<BaseViewModel>
         set => SetValue(DelCommandProperty, value);
     }
 
-    public static readonly StyledProperty<ReactiveCommand<Unit, Unit>> CancelCommandProperty =
-        AvaloniaProperty.Register<CrudToolBar, ReactiveCommand<Unit, Unit>>(nameof(CancelCommand));
+    public static readonly StyledProperty<ReactiveCommand<Unit, Unit>> CancelFilterCommandProperty =
+        AvaloniaProperty.Register<CrudToolBar, ReactiveCommand<Unit, Unit>>(nameof(CancelFilterCommand));
 
-    public ReactiveCommand<Unit, Unit> CancelCommand
+    public ReactiveCommand<Unit, Unit> CancelFilterCommand
     {
-        get => GetValue(CancelCommandProperty);
-        set => SetValue(CancelCommandProperty, value);
+        get => GetValue(CancelFilterCommandProperty);
+        set => SetValue(CancelFilterCommandProperty, value);
     }
 
     public static readonly StyledProperty<ReactiveCommand<Unit, Unit>> FilterCommandProperty =

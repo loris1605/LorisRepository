@@ -9,29 +9,26 @@ namespace ViewModels
 {
     public class SettoreGroupViewModel : GroupViewModel<SettoreMap, SettoreR>
     {
-        public ReactiveCommand<Unit, Unit> FilterCommand { get; }
-        public ReactiveCommand<Unit, Unit> UpdCommand { get; }
-        public ReactiveCommand<Unit, Unit> DelCommand { get; }
         public ReactiveCommand<Unit, Unit> OperatoriCommand { get; }
         public ReactiveCommand<Unit, Unit> PostazioniCommand { get; }
+        public ReactiveCommand<Unit, Unit> TariffeCommand { get; }
 
         public SettoreGroupViewModel(IScreen host) : base(host)
         {
-            FilterCommand = ReactiveCommand.CreateFromTask(OnCancelFilter);
-            UpdCommand = ReactiveCommand.CreateFromTask(OnUpd);
-            OperatoriCommand = ReactiveCommand.CreateFromTask(OnGoToOperatori);
-            PostazioniCommand = ReactiveCommand.CreateFromTask(OnGoToPostazioni);
-
-            DelCommand = ReactiveCommand.CreateFromTask(
-                OnDel,
-                this.WhenAnyValue(
+            var canDel = this.WhenAnyValue(
                            x => x.GroupBindingT.CodiceListino, // Monitora la proprietà specifica
                            x => x.GroupBindingT.Id,             // Monitora l'Id
                            (permesso, id) =>
                                this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
                                permesso == 0 &&
-                               id != -1));
+                               id != -1);
 
+            OperatoriCommand = ReactiveCommand.CreateFromTask(OnGoToOperatori);
+            PostazioniCommand = ReactiveCommand.CreateFromTask(OnGoToPostazioni);
+            TariffeCommand = ReactiveCommand.CreateFromTask(OnGoToTariffe);
+
+            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting, canDel);
+            
             this.WhenActivated(d =>
             {
 
@@ -68,18 +65,15 @@ namespace ViewModels
                 //UpdTesseraCommand = ReactiveCommand.CreateFromTask(OnUpdTessera, canTesseraDel)
                 //.DisposeWith(d);
 
-                UpdCommand.DisposeWith(d);
                 OperatoriCommand.DisposeWith(d);
-                DelCommand.DisposeWith(d);
-                FilterCommand.DisposeWith(d);
                 PostazioniCommand.DisposeWith(d);
-
+                TariffeCommand.DisposeWith(d);
             });
 
 
         }
 
-        private async Task OnDel()
+        protected override async Task OnDeleting()
         {
             if (HostScreen is IConfigurazioneScreen configurazioneHost)
             {
@@ -90,7 +84,7 @@ namespace ViewModels
             }
         }
 
-        private async Task OnUpd()
+        protected override async Task OnUpdating()
         {
             if (HostScreen is IConfigurazioneScreen configurazioneHost)
             {
@@ -131,6 +125,16 @@ namespace ViewModels
                 await configurazioneHost.ConfigurazioneRouter
                     .NavigateAndReset
                     .Execute(new PostazioneGroupViewModel(configurazioneHost));
+            }
+        }
+
+        private async Task OnGoToTariffe()
+        {
+            if (HostScreen is IConfigurazioneScreen configurazioneHost)
+            {
+                await configurazioneHost.ConfigurazioneRouter
+                    .NavigateAndReset
+                    .Execute(new TariffaGroupViewModel(configurazioneHost));
             }
         }
     }

@@ -32,11 +32,17 @@ namespace ViewModels
         public virtual int Param1 { get; set;}
         public virtual int Param2 { get; set; }
 
-        public ReactiveCommand<Unit,Unit> AddCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> UpdCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> DelCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> FilterCommand { get; protected set; }
 
         public GroupViewModel(IScreen host) : base(host)
         {
             AddCommand = ReactiveCommand.CreateFromTask(OnAdding);
+            UpdCommand = ReactiveCommand.CreateFromTask(OnUpdating);
+            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting);
+            FilterCommand = ReactiveCommand.CreateFromTask(OnLoading);
 
             Q = Create<W>.Instance();
 
@@ -57,8 +63,10 @@ namespace ViewModels
                     .DisposeWith(d);
 
                 AddCommand.DisposeWith(d);
+                UpdCommand.DisposeWith(d);
+                DelCommand.DisposeWith(d);
+                FilterCommand.DisposeWith(d);
 
-                
             });
         }
 
@@ -92,33 +100,8 @@ namespace ViewModels
         }
 
         protected abstract Task OnAdding();
-
-        //public void InitWithModel()
-        //{
-        //    Q = Create<W>.Instance();
-        //    if (ActiveModel?.GetType() == typeof(int))
-        //    {
-        //        CaricaDataSource((int)ActiveModel);
-        //    }
-        //    else
-        //    {
-        //        CaricaByModel(ActiveModel);
-        //    }
-
-        //    try
-        //    {
-
-        //    }
-        //    catch (NullReferenceException)
-        //    {
-        //        return;
-        //    }
-
-        //    if (DataSource.Count > 0)
-        //    {
-        //        GroupBindingT = DataSource[0];
-        //    }
-        //}
+        protected abstract Task OnUpdating();
+        protected abstract Task OnDeleting();
 
         private async Task OnFilter()
         {

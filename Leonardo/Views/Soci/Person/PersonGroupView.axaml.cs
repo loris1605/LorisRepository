@@ -62,62 +62,6 @@ public partial class PersonGroupView : ReactiveUserControl<PersonGroupViewModel>
 
             #region Commands
 
-            this.Bind(ViewModel,
-                vm => vm.AddCommand,
-                v => v.CrudBar.AddCommand)
-            .DisposeWith(d);
-
-            this.Bind(ViewModel,
-                vm => vm.PersonUpdCommand,
-                v => v.CrudBar.UpdCommand)
-            .DisposeWith(d);
-
-            this.Bind(ViewModel,
-                vm => vm.PersonDelCommand,
-                v => v.CrudBar.DelCommand)
-            .DisposeWith(d);
-
-            this.Bind(ViewModel,
-                vm => vm.PersonSearchCommand,
-                v => v.CrudBar.FilterCommand)
-            .DisposeWith(d);
-
-            this.BindCommand(ViewModel,
-                vm => vm.FilterCommand,
-                v => v.CrudBar.CancelCommand)
-                .DisposeWith(d);
-
-
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.AddCodiceSocioCommand,
-            //    v => v.AddSocioButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.DelCodiceSocioCommand,
-            //    v => v.DelSocioButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.UpdCodiceSocioCommand,
-            //    v => v.UpdSocioButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.AddTesseraCommand,
-            //    v => v.AddTesseraButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.DelTesseraCommand,
-            //    v => v.DelTesseraButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.UpdTesseraCommand,
-            //    v => v.UpdTesseraButton)
-            //    .DisposeWith(d);
 
             #endregion
 

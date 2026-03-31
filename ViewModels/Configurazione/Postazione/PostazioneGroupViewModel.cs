@@ -9,39 +9,28 @@ namespace ViewModels
 {
     public class PostazioneGroupViewModel : GroupViewModel<PostazioneMap, PostazioneR>
     {
-        public ReactiveCommand<Unit, Unit> UpdCommand { get; }
-        public ReactiveCommand<Unit, Unit> DelCommand { get; }
         public ReactiveCommand<Unit, Unit> OperatoriCommand { get; }
         public ReactiveCommand<Unit, Unit> SettoriCommand { get; }
-        public ReactiveCommand<Unit, Unit> FilterCommand { get; }
+        public ReactiveCommand<Unit, Unit> TariffeCommand { get; }
 
         public PostazioneGroupViewModel(IScreen host) : base(host)
         {
-            FilterCommand = ReactiveCommand.CreateFromTask(OnCancelFilter);
-            UpdCommand = ReactiveCommand.CreateFromTask(OnUpd);
-            OperatoriCommand = ReactiveCommand.CreateFromTask(OnGoToOperatori);
-            SettoriCommand = ReactiveCommand.CreateFromTask(OnGoToSettori);
-
-            DelCommand = ReactiveCommand.CreateFromTask(
-                OnDel,
-                this.WhenAnyValue(
-                           x => x.GroupBindingT.CodiceReparto, // Monitora la proprietà specifica
-                           x => x.GroupBindingT.Id,             // Monitora l'Id
-                           (permesso, id) =>
-                               this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
-                               permesso == 0 &&
-                               id != -1));
-
-            this.WhenActivated(d =>
-            {
-
-                var canDel = this.WhenAnyValue(
+            var canDel = this.WhenAnyValue(
                            x => x.GroupBindingT.CodiceReparto, // Monitora la proprietà specifica
                            x => x.GroupBindingT.Id,             // Monitora l'Id
                            (permesso, id) =>
                                this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
                                permesso == 0 &&
                                id != -1);
+
+            OperatoriCommand = ReactiveCommand.CreateFromTask(OnGoToOperatori);
+            SettoriCommand = ReactiveCommand.CreateFromTask(OnGoToSettori);
+            TariffeCommand = ReactiveCommand.CreateFromTask(OnGoToTariffe);
+
+            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting,canDel);
+            
+            this.WhenActivated(d =>
+            {
 
                 //var canSocioUpd = this.WhenAnyValue(
                 //            x => x.GroupBindingT.CodiceSocio,
@@ -75,19 +64,17 @@ namespace ViewModels
                 //UpdTesseraCommand = ReactiveCommand.CreateFromTask(OnUpdTessera, canTesseraDel)
                 //.DisposeWith(d);
 
-                UpdCommand.DisposeWith(d);
                 OperatoriCommand.DisposeWith(d);
                 SettoriCommand.DisposeWith(d);
-                DelCommand.DisposeWith(d);
-                FilterCommand.DisposeWith(d);
-                
+                TariffeCommand.DisposeWith(d);
+
             });
 
 
-
+                    
         }
 
-        private async Task OnDel()
+        protected override  async Task OnDeleting()
         {
             if (HostScreen is IConfigurazioneScreen configurazioneHost)
             {
@@ -109,7 +96,7 @@ namespace ViewModels
             }
         }
 
-        private async Task OnUpd()
+        protected override async Task OnUpdating()
         {
             if (HostScreen is IConfigurazioneScreen configurazioneHost)
             {
@@ -119,9 +106,6 @@ namespace ViewModels
                     .Execute(new PostazioneUpdViewModel(configurazioneHost, GroupBindingT.Id));
             }
         }
-
-        private async Task OnCancelFilter() => await OnLoading();
-       
 
         private async Task OnGoToOperatori()
         {
@@ -140,6 +124,16 @@ namespace ViewModels
                 await configurazioneHost.ConfigurazioneRouter
                     .NavigateAndReset
                     .Execute(new SettoreGroupViewModel(configurazioneHost));
+            }
+        }
+
+        private async Task OnGoToTariffe()
+        {
+            if (HostScreen is IConfigurazioneScreen configurazioneHost)
+            {
+                await configurazioneHost.ConfigurazioneRouter
+                    .NavigateAndReset
+                    .Execute(new TariffaGroupViewModel(configurazioneHost));
             }
         }
     }

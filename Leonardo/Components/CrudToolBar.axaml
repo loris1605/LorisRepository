@@ -51,7 +51,7 @@
                          DockPanel.Dock="Top"
                          ToolTipText="{Binding #Root.GroupText, StringFormat='CANCELLA FILTRO {0}'}"
                          HorizontalAlignment="Left"
-                         Command="{Binding #Root.CancelCommand}">
+                         Command="{Binding #Root.CancelFilterCommand}">
 
                 <Image Source="avares://ControlStyles/Resources/AnnullaIcon.png" Width="30" Height="30" />
 

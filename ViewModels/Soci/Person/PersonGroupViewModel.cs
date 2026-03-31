@@ -10,9 +10,6 @@ namespace ViewModels
     public class PersonGroupViewModel : GroupViewModel<PersonMap, PersonR>
     {
 
-        public ReactiveCommand<Unit, Unit> PersonUpdCommand { get; }
-        public ReactiveCommand<Unit, Unit> PersonDelCommand { get; private set; }
-        public ReactiveCommand<Unit, Unit> FilterCommand { get; }
         public ReactiveCommand<Unit, Unit> AddCodiceSocioCommand { get; }
         public ReactiveCommand<Unit, Unit> DelCodiceSocioCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> UpdCodiceSocioCommand { get; private set; }
@@ -23,21 +20,23 @@ namespace ViewModels
 
         public PersonGroupViewModel(IScreen host) : base(host)
         {
-            PersonUpdCommand = ReactiveCommand.Create(OnPersonUpd);
-            FilterCommand = ReactiveCommand.CreateFromTask(OnCancelFilter);
+            var canDel = this.WhenAnyValue(
+                             x => x.GroupBindingT.CodiceSocio,
+                             (codice) => codice == 0);
+
+            //ridefiniamo il DelCommand aggiungendo il canDel
+            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting, canDel);
+
             AddCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnAddCodiceSocio);
             PersonSearchCommand = ReactiveCommand.CreateFromTask(OnPersonSearch);
-            
+
             this.WhenActivated(d =>
             {
-                //this.WhenAnyValue(x => x.GroupBindingT)
-                //    .Select(selection => selection != null)
-                //    .BindTo(this, x => x.EnabledButton)
-                //    .DisposeWith(d); // Usa l'activator della base
+                this.WhenAnyValue(x => x.GroupBindingT)
+                    .Select(selection => selection != null)
+                    .BindTo(this, x => x.EnabledButton)
+                    .DisposeWith(d); // Usa l'activator della base
 
-                var canPersonDel = this.WhenAnyValue(
-                            x => x.GroupBindingT.CodiceSocio,
-                            (codice) => codice == 0);
 
                 var canSocioUpd = this.WhenAnyValue(
                             x => x.GroupBindingT.CodiceSocio,
@@ -57,9 +56,9 @@ namespace ViewModels
                             x => x.GroupBindingT.CodiceSocio,
                             x => x.GroupBindingT.NumeroTessera,
                             (codice, tessera) => codice != 0 && string.IsNullOrWhiteSpace(tessera));
-
-                PersonDelCommand = ReactiveCommand.Create(OnPersonDel, canPersonDel)
-                .DisposeWith(d);
+                
+               
+                AddCodiceSocioCommand.DisposeWith(d);
                 DelCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnDelCodiceSocio, canSocioDel)
                 .DisposeWith(d);
                 UpdCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnUpdCodiceSocio, canSocioUpd)
@@ -70,24 +69,18 @@ namespace ViewModels
                 .DisposeWith(d);
                 UpdTesseraCommand = ReactiveCommand.CreateFromTask(OnUpdTessera, canTesseraDel)
                 .DisposeWith(d);
-
                 
             });
 
         }
-
-        //public PersonGroupViewModel(IScreen host, object model) : base(host)
-        //{
-
-        //}
-
-
+        
         public override int Param1 => BindingT is null ? 0 : BindingT.CodiceSocio;
         public override int Param2 => BindingT is null ? 0 : BindingT.CodiceTessera;
         public string NumeroSocio => BindingT is null ? "" : BindingT.NumeroSocio;
         public string NumeroTessera => BindingT is null ? "" : BindingT.NumeroTessera;
-
-        
+        public int CodiceSocio => BindingT is null ? 0 : BindingT.CodiceSocio;
+        public int CodiceTessera => BindingT is null ? 0 : BindingT.CodiceTessera;
+        public int Scadenza => BindingT is null ? 0 : BindingT.Scadenza;
 
         protected override async Task OnAdding()
         {
@@ -98,21 +91,21 @@ namespace ViewModels
             }
         }
 
-        private void OnPersonUpd()
+        protected override async Task OnUpdating()
         {
             if (HostScreen is ISociScreen sociHost)
             {
                 sociHost.GroupEnabled = false;
-                sociHost.SociInputRouter.Navigate.Execute(new PersonUpdViewModel(sociHost, GroupBindingT.Id));
+                await sociHost.SociInputRouter.Navigate.Execute(new PersonUpdViewModel(sociHost, GroupBindingT.Id));
             }
         }
 
-        private void OnPersonDel()
+        protected override async Task OnDeleting()
         {
             if (HostScreen is ISociScreen sociHost)
             {
                 sociHost.GroupEnabled = false;
-                sociHost.SociInputRouter.Navigate.Execute(new PersonDelViewModel(sociHost, GroupBindingT.Id));
+                await sociHost.SociInputRouter.Navigate.Execute(new PersonDelViewModel(sociHost, GroupBindingT.Id));
             }
         }
 
@@ -204,10 +197,6 @@ namespace ViewModels
             }
         }
 
-        private async Task OnCancelFilter()
-        {
-            await OnLoading();
-
-        }
+        
     }
 }

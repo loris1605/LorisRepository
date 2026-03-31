@@ -43,7 +43,7 @@ namespace Models.Repository
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Errore in OnLoading: {ex.Message}");
-                return new List<SettoreMap>();
+                return [];
             }
             
             

@@ -38,13 +38,13 @@ public partial class PostazioneGroupView : ReactiveUserControl<PostazioneGroupVi
 
             this.OneWayBind(ViewModel,
                     vm => vm.EnabledButton,
-                    v => v.UpdButton.IsEnabled,
+                    v => v.CrudBar.UpdButton.IsEnabled,
                     l => l)
             .DisposeWith(d);
 
             this.OneWayBind(ViewModel,
                     vm => vm.EnabledButton,
-                    v => v.DelButton.IsEnabled,
+                    v => v.CrudBar.DelButton.IsEnabled,
                     l => l)
             .DisposeWith(d);
 
@@ -58,60 +58,6 @@ public partial class PostazioneGroupView : ReactiveUserControl<PostazioneGroupVi
 
             #region Commands
 
-            this.BindCommand(ViewModel,
-                vm => vm.AddCommand,
-                v => v.AddButton)
-                .DisposeWith(d);
-
-            this.BindCommand(ViewModel,
-                vm => vm.UpdCommand,
-                v => v.UpdButton)
-                .DisposeWith(d);
-
-            this.BindCommand(ViewModel,
-                vm => vm.DelCommand,
-                v => v.DelButton)
-            .DisposeWith(d);
-
-            this.BindCommand(ViewModel,
-                vm => vm.FilterCommand,
-                v => v.CancelFilterButton)
-            .DisposeWith(d);
-
-            this.BindCommand(ViewModel,
-                vm => vm.OperatoriCommand,
-                v => v.OperatoriButton)
-                .DisposeWith(d);
-
-            this.BindCommand(ViewModel,
-                vm => vm.SettoriCommand,
-                v => v.SettoriButton)
-                .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.DelCodiceSocioCommand,
-            //    v => v.DelSocioButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.UpdCodiceSocioCommand,
-            //    v => v.UpdSocioButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.AddTesseraCommand,
-            //    v => v.AddTesseraButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.DelTesseraCommand,
-            //    v => v.DelTesseraButton)
-            //    .DisposeWith(d);
-
-            //this.BindCommand(ViewModel,
-            //    vm => vm.UpdTesseraCommand,
-            //    v => v.UpdTesseraButton)
-            //    .DisposeWith(d);
 
             #endregion
 

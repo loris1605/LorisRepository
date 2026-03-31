@@ -1,4 +1,6 @@
-﻿using ReactiveUI;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using ReactiveUI;
 using SysNet;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -26,6 +28,7 @@ namespace ViewModels
         public ViewModelActivator Activator { get; } = new();
 
         
+        public ReactiveCommand<Unit, Unit> AppExitCommand { get; }
         public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         public BaseViewModel(IScreen hostScreen, string urlPathSegment = null)
@@ -36,8 +39,9 @@ namespace ViewModels
             UrlPathSegment = urlPathSegment ?? this.GetType().Name;
             
             LoadCommand = ReactiveCommand.CreateFromTask(OnLoading);
-
+            AppExitCommand = ReactiveCommand.Create(OnAppShutDown);
             
+
 #if DEBUG
 
             GC.Collect();
@@ -72,12 +76,18 @@ namespace ViewModels
                     Debug.WriteLine($"***** [VM] {this.GetType().Name} {this.GetHashCode()} disposed *****");
 #endif
                 }).DisposeWith(disposables);
+
+                AppExitCommand.DisposeWith(disposables);
+                LoadCommand.DisposeWith(disposables);
             });
         }
 
         
         protected virtual void OnFinalDestruction()
         {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
             // Questo log conferma che la LOGICA di rimozione ha funzionato
             Debug.WriteLine($"***** [VM] {this.GetType().Name} {this.GetHashCode()}  +" +
                             $"rimosso correttamente dallo stack *****");
@@ -93,6 +103,14 @@ namespace ViewModels
 
         protected abstract Task OnLoading();
 
-        
+        protected void OnAppShutDown()
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+                lifetime.Shutdown();
+            
+        }
+
+
+
     }
 }

@@ -4,12 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="using:ViewModels"
+             xmlns:vmdt="using:ViewModels.DataTypes"
              xmlns:ui="using:ControlStyles"
              xmlns:r="using:ReactiveUI.Avalonia"
              xmlns:lc="using:Leonardo"
              KeyboardNavigation.TabNavigation="Cycle"
              Background="Transparent"
-             x:CompileBindings="False"
+             x:DataType="vm:PostazioneGroupViewModel"
+             x:CompileBindings="True"
              x:Class="Leonardo.PostazioneGroupView">
 
     <Grid x:Name="MainGrid">
@@ -27,7 +29,11 @@
         <lc:CrudToolBar x:Name="CrudBar"
                         GroupText="POSTAZIONE"
                         Grid.ColumnSpan="2"
-                        FilterCommandVisibile="False"/>
+                        FilterCommandVisibile="False"
+                        AddCommand="{Binding AddCommand}"
+                        DelCommand="{Binding DelCommand}"
+                        UpdCommand="{Binding UpdCommand}"
+                        CancelFilterCommand="{Binding FilterCommand}"/>
     
         
 
@@ -50,79 +56,33 @@
             </HeaderedContentControl.Header>
 
             <DataGrid ItemsSource="{Binding GroupedDataSource}"
-                      x:CompileBindings="False"
+                      Classes="Group"
                       x:Name="PostazioneDataGrid"
                       SelectedItem="{Binding GroupBindingT}"
-                      SelectedIndex="{Binding IdIndex}"
-                      
-                      VerticalAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      CanUserSortColumns="True"
-                      IsReadOnly="True"
-                      GridLinesVisibility="All"
-                      Margin="20">
-
-                <DataGrid.Resources>
-					
-                    <DataTemplate x:Key="CodiceRepartoTemplate" x:CompileBindings="False">
-                        <TextBlock Text="{Binding CodiceReparto}" 
-                                   Margin="10,0"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                    <DataTemplate x:Key="NomeSettoreTemplate" x:CompileBindings="False">
-                        <TextBlock Text="{Binding NomeSettore}" 
-                                   VerticalAlignment="Center"
-                                   Margin="10,0"
-                                   HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                    <DataTemplate x:Key="EtichettaSettoreTemplate" x:CompileBindings="False">
-                        <TextBlock Text="{Binding EtichettaSettore}"
-                                   VerticalAlignment="Center"
-                                   Margin="10,0"
-                                   HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                    <DataTemplate x:Key="NomeTipoSettoreTemplate" x:CompileBindings="False">
-                        <TextBlock Text="{Binding NomeTipoSettore}"
-                                   VerticalAlignment="Center"
-                                   Margin="10,0"
-                                   HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                    
-                </DataGrid.Resources>
-            
-                <DataGrid.Styles>
-                    <Style Selector="DataGridColumnHeader">
-                        <Setter Property="FontSize" Value="11" />
-                        <Setter Property="FontWeight" Value="SemiBold" />
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                    <Style Selector="DataGridRowGroupHeader">
-                        <Setter Property="Background" Value="#F2F2F2" />
-                        <Setter Property="Height" Value="30" />
-                    </Style>
-                    
-                </DataGrid.Styles>
+                      SelectedIndex="{Binding IdIndex}">
 
                 <DataGrid.Columns >
                     
-                                               
-                    <DataGridTemplateColumn Header="Cod." 
-                                            CellTemplate="{StaticResource CodiceRepartoTemplate}"
-                                            IsVisible="False"/>
+                    <DataGridTextColumn Header="Cod." 
+                                        x:DataType="vmdt:PostazioneMapDataType"
+                                        Binding="{Binding CodiceReparto}" 
+                                        IsVisible="False" />
 
-                    <DataGridTemplateColumn Header="Settore" 
-                                            Width="Auto"
-                                            CellTemplate="{StaticResource NomeSettoreTemplate}"/>
+                    <DataGridTextColumn Header="Nome" 
+                                        x:DataType="vmdt:PostazioneMapDataType"
+                                        Binding="{Binding NomeSettore}" 
+                                        Width="Auto" />
 
-                    <DataGridTemplateColumn Header="Etichetta" 
-                                            Width="Auto"
-                                            CellTemplate="{StaticResource EtichettaSettoreTemplate}"/>
-                    
-                    <DataGridTemplateColumn Header="Tipo" 
-                                            CellTemplate="{StaticResource NomeTipoSettoreTemplate}"/>
-                    
-                    
+                    <DataGridTextColumn Header="Etichetta" 
+                                        x:DataType="vmdt:PostazioneMapDataType"
+                                        Binding="{Binding EtichettaSettore}" 
+                                        Width="Auto" />
+
+                    <DataGridTextColumn Header="Tipo" 
+                                        x:DataType="vmdt:PostazioneMapDataType"
+                                        Binding="{Binding NomeTipoSettore}" 
+                                        Width="Auto" />
+                                        
                 </DataGrid.Columns>
 
             </DataGrid>
@@ -165,21 +125,24 @@
                                  Margin="20,5"
                                  ToolTipText="GRUPPO OPERATORI"
                                  HorizontalAlignment="Stretch"
-                                 Content=" OPERATORI "/>
+                                 Content=" OPERATORI "
+                                 Command="{Binding OperatoriCommand}"/>
 
             <ui:UiButton x:Name="SettoriButton"
                                  Margin="20,5"
                                  ToolTipText="GRUPPO SETTORI"
                                  HorizontalAlignment="Stretch"
                                  Content="SETTORI"
-                                 HorizontalContentAlignment="Center"/>
+                                 HorizontalContentAlignment="Center"
+                                 Command="{Binding SettoriCommand}"/>
 
             <ui:UiButton x:Name="TariffeButton"
                                  Margin="20,5"
                                  ToolTipText="GRUPPO TARIFFE"
                                  HorizontalAlignment="Stretch"
                                  Content="TARIFFE"
-                                 HorizontalContentAlignment="Center"/>
+                                 HorizontalContentAlignment="Center"
+                                 Command="{Binding TariffeCommand}"/>
 
             <ui:UiButton x:Name="RientriButton"
                                  Margin="20,5"

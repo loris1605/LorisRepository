@@ -1,46 +1,44 @@
 ﻿using Models.Entity;
 using Models.Repository;
 using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ViewModels
 {
-    public class OperatoreGroupViewModel : GroupViewModel<OperatoreMap, OperatoreR>
+    public class TariffaGroupViewModel : GroupViewModel<TariffaMap, TariffaR>
     {
         public ReactiveCommand<Unit, Unit> PostazioniCommand { get; }
         public ReactiveCommand<Unit, Unit> SettoriCommand { get; }
-        public ReactiveCommand<Unit, Unit> TariffeCommand { get; }
+        public ReactiveCommand<Unit, Unit> OperatoriCommand { get; }
 
-        public OperatoreGroupViewModel(IScreen host) : base(host)
+        public TariffaGroupViewModel(IScreen host) : base(host)
         {
-            var canDel = this.WhenAnyValue(
-                           x => x.GroupBindingT.CodicePermesso, // Monitora la proprietà specifica
-                           x => x.GroupBindingT.Id,             // Monitora l'Id
-                           (permesso, id) =>
-                               this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
-                               permesso == 0 &&
-                               id != -1);
+            //var canDel = this.WhenAnyValue(
+            //               x => x.GroupBindingT.PrezzoTariffa, // Monitora la proprietà specifica
+            //               x => x.GroupBindingT.Id,             // Monitora l'Id
+            //               (prezzo, id) =>
+            //                   this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
+            //                   prezzo == decimal.Zero &&
+            //                   id != -1);
 
-            PostazioniCommand = ReactiveCommand.CreateFromTask(OnGoToPosizioni);
+            PostazioniCommand = ReactiveCommand.CreateFromTask(OnGoToPostazioni);
             SettoriCommand = ReactiveCommand.CreateFromTask(OnGoToSettori);
-            TariffeCommand = ReactiveCommand.CreateFromTask(OnGoToTariffe);
-
-            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting, canDel);
+            OperatoriCommand = ReactiveCommand.CreateFromTask(OnGoToOperatori);
+            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting);
             
-
             this.WhenActivated(d =>
             {
-               
                 PostazioniCommand.DisposeWith(d);
                 SettoriCommand.DisposeWith(d);
-                TariffeCommand.DisposeWith(d);
-
+                OperatoriCommand.DisposeWith(d);
             });
-
-            
-
         }
 
         protected override async Task OnDeleting()
@@ -76,7 +74,17 @@ namespace ViewModels
             }
         }
 
-        private async Task OnGoToPosizioni()
+        private async Task OnGoToOperatori()
+        {
+            if (HostScreen is IConfigurazioneScreen configurazioneHost)
+            {
+                await configurazioneHost.ConfigurazioneRouter
+                    .NavigateAndReset
+                    .Execute(new OperatoreGroupViewModel(configurazioneHost));
+            }
+        }
+
+        private async Task OnGoToPostazioni()
         {
             if (HostScreen is IConfigurazioneScreen configurazioneHost)
             {
@@ -93,16 +101,6 @@ namespace ViewModels
                 await configurazioneHost.ConfigurazioneRouter
                     .NavigateAndReset
                     .Execute(new SettoreGroupViewModel(configurazioneHost));
-            }
-        }
-
-        private async Task OnGoToTariffe()
-        {
-            if (HostScreen is IConfigurazioneScreen configurazioneHost)
-            {
-                await configurazioneHost.ConfigurazioneRouter
-                    .NavigateAndReset
-                    .Execute(new TariffaGroupViewModel(configurazioneHost));
             }
         }
     }

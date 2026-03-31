@@ -4,13 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="using:ViewModels"
+             xmlns:vmdt="using:ViewModels.DataTypes"
              xmlns:ui="using:ControlStyles"
              xmlns:r="using:ReactiveUI.Avalonia"
              xmlns:lc="using:Leonardo"
-            
              KeyboardNavigation.TabNavigation="Cycle"
              Background="Transparent"
-             x:CompileBindings="False"
+             x:DataType="vm:OperatoreGroupViewModel"
+             x:CompileBindings="True"
              x:Class="Leonardo.OperatoreGroupView">
 
     <Grid x:Name="MainGrid">
@@ -28,7 +29,11 @@
         <lc:CrudToolBar x:Name="CrudBar"
                         GroupText="OPERATORE"
                         Grid.ColumnSpan="2"
-                        FilterCommandVisibile="False"/>
+                        FilterCommandVisibile="False"
+                        AddCommand="{Binding AddCommand}"
+                        DelCommand="{Binding DelCommand}"
+                        UpdCommand="{Binding UpdCommand}"
+                        CancelFilterCommand="{Binding FilterCommand}"/>
 
         <HeaderedContentControl BorderBrush="Black" 
                                 Grid.Row="1" 
@@ -49,67 +54,29 @@
             </HeaderedContentControl.Header>
 
             <DataGrid ItemsSource="{Binding GroupedDataSource}"
-                      x:CompileBindings="False"
+                      Classes="Group"
                       x:Name="OperatoreDataGrid"
                       SelectedItem="{Binding GroupBindingT}"
-                      SelectedIndex="{Binding IdIndex}"
-                      
-                      VerticalAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      CanUserSortColumns="True"
-                      IsReadOnly="True"
-                      GridLinesVisibility="All"
-                      Margin="20">
-
-                <DataGrid.Resources>
-					
-                    <DataTemplate x:Key="CodicePermessoTemplate" x:CompileBindings="False">
-                        <TextBlock Text="{Binding CodicePermesso}" 
-                                   Margin="10,0"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                    <DataTemplate x:Key="NomePostazioneTemplate" x:CompileBindings="False">
-                        <TextBlock Text="{Binding NomePostazione}" 
-                                   VerticalAlignment="Center"
-                                   Margin="10,0"
-                                   HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                    <DataTemplate x:Key="TipoPostazioneTemplate" x:CompileBindings="False">
-                        <TextBlock Text="{Binding TipoPostazione}"
-                                   VerticalAlignment="Center"
-                                   Margin="10,0"
-                                   HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                    
-                </DataGrid.Resources>
-            
-                <DataGrid.Styles>
-                    <Style Selector="DataGridColumnHeader">
-                        <Setter Property="FontSize" Value="11" />
-                        <Setter Property="FontWeight" Value="SemiBold" />
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                    <Style Selector="DataGridRowGroupHeader">
-                        <Setter Property="Background" Value="#F2F2F2" />
-                        <Setter Property="Height" Value="30" />
-                    </Style>
-                    
-                </DataGrid.Styles>
+                      SelectedIndex="{Binding IdIndex}">
+                
 
                 <DataGrid.Columns >
                     
-                                               
-                    <DataGridTemplateColumn Header="Cod." 
-                                            CellTemplate="{StaticResource CodicePermessoTemplate}"
-                                            IsVisible="False"/>
+                    <DataGridTextColumn Header="Cod." 
+                                        x:DataType="vmdt:OperatoreMapDataType"
+                                        Binding="{Binding CodicePermesso}" 
+                                        IsVisible="False" />
 
-                    <DataGridTemplateColumn Header="Postazione" 
-                                            Width="Auto"
-                                            CellTemplate="{StaticResource NomePostazioneTemplate}"/>
+                    <DataGridTextColumn Header="Nome" 
+                                        x:DataType="vmdt:OperatoreMapDataType"
+                                        Binding="{Binding NomePostazione}" 
+                                        Width="Auto" />
+
+                    <DataGridTextColumn Header="Tipo" 
+                                        x:DataType="vmdt:OperatoreMapDataType"
+                                        Binding="{Binding TipoPostazione}" 
+                                        Width="Auto" />
                     
-                    <DataGridTemplateColumn Header="Tipo" 
-                                            CellTemplate="{StaticResource TipoPostazioneTemplate}"/>
                     
                     
                 </DataGrid.Columns>
@@ -154,21 +121,24 @@
                                  Margin="20,5"
                                  ToolTipText="GRUPPO POSTAZIONI"
                                  HorizontalAlignment="Stretch"
-                                 Content=" POSTAZIONI "/>
+                                 Content=" POSTAZIONI "
+                                 Command="{Binding PostazioniCommand}"/>
 
             <ui:UiButton x:Name="SettoriButton"
                                  Margin="20,5"
                                  ToolTipText="GRUPPO SETTORI"
                                  HorizontalAlignment="Stretch"
                                  Content="SETTORI"
-                                 HorizontalContentAlignment="Center"/>
+                                 HorizontalContentAlignment="Center"
+                                 Command="{Binding SettoriCommand}"/>
 
             <ui:UiButton x:Name="TariffeButton"
                                  Margin="20,5"
                                  ToolTipText="GRUPPO TARIFFE"
                                  HorizontalAlignment="Stretch"
                                  Content="TARIFFE"
-                                 HorizontalContentAlignment="Center"/>
+                                 HorizontalContentAlignment="Center"
+                                 Command="{Binding TariffeCommand}"/>
 
             <ui:UiButton x:Name="RientriButton"
                                  Margin="20,5"

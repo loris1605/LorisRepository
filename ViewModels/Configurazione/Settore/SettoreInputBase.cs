@@ -10,8 +10,7 @@ namespace ViewModels
 {
     public partial class SettoreInputBase : InputViewModel
     {
-
-        
+       
 
         public SettoreInputBase(IScreen host) : base(host)
         {

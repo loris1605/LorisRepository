@@ -9,6 +9,7 @@
              KeyboardNavigation.TabNavigation="Cycle"
              Background="Transparent"
              x:CompileBindings="False"
+             x:DataType="vm:PersonGroupViewModel"
              x:Class="Leonardo.PersonGroupView">
 
     <UserControl.Resources>
@@ -32,7 +33,12 @@
         <lc:CrudToolBar x:Name="CrudBar"
                         GroupText="SOCI"
                         Grid.ColumnSpan="2"
-                        FilterCommandVisibile="True"/>
+                        FilterCommandVisibile="True"
+                        AddCommand="{Binding AddCommand}"
+                        DelCommand="{Binding DelCommand}"
+                        UpdCommand="{Binding UpdCommand}"
+                        FilterCommand="{Binding PersonSearchCommand}"
+                        CancelFilterCommand="{Binding FilterCommand}"/>
     
 
         <HeaderedContentControl BorderBrush="Black" 
@@ -168,7 +174,8 @@
                                      MinWidth="50"
                                      Margin="20,5"
                                      ToolTipText="AGGIUNGI CODICE SOCIO"
-                                     HorizontalAlignment="Center">
+                                     HorizontalAlignment="Center"
+                                     Command="{Binding AddCodiceSocioCommand}">
 
                             <Image Source="avares://ControlStyles/Resources/AddSocioIcon.png" Width="34" Height="34" />
                         
@@ -178,7 +185,8 @@
                                      MinWidth="50"
                                      Margin="20,5"
                                      ToolTipText="CANCELLA CODICE SOCIO"
-                                     HorizontalAlignment="Center">
+                                     HorizontalAlignment="Center"
+                                     Command="{Binding DelCodiceSocioCommand}">
 
                             <Image Source="avares://ControlStyles/Resources/CancellaIcon.png" Width="34" Height="34" />
                         
@@ -188,7 +196,8 @@
                                      MinWidth="50"
                                      Margin="20,5"
                                      ToolTipText="MODIFICA CODICE SOCIO"
-                                     HorizontalAlignment="Center">
+                                     HorizontalAlignment="Center"
+                                     Command="{Binding UpdCodiceSocioCommand}">
 
                             <Image Source="avares://ControlStyles/Resources/ModificaIcon.png" Width="34" Height="34" />
                         

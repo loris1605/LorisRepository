@@ -1,4 +1,6 @@
-﻿using Models.Entity;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Models.Entity;
 using Models.Repository;
 using ReactiveUI;
 using SysNet;
@@ -14,24 +16,44 @@ namespace ViewModels
         private LoginR Q;
 
         public ReactiveCommand<Unit, Unit> EntraCommand { get; }
-        public ReactiveCommand<Unit, Unit> EsciCommand { get; }
+        //public ReactiveCommand<Unit, Unit> EsciCommand { get; }
 
         //public LoginViewModel() { }
 
         public LoginViewModel(IScreen host) : base(host)
         {
-            EntraCommand = ReactiveCommand.CreateFromTask(OnEntra);
-           
+            var canEntra = this.WhenAnyValue(
+               x => x.PasswordText,
+               x => x.BindingT,
+               (pass, operatore) =>
+                   !string.IsNullOrWhiteSpace(pass) &&
+                   operatore != null &&
+                   pass == operatore.Password);
+
+
+            EntraCommand = ReactiveCommand.CreateFromTask(OnEntra, canEntra);
+
+            //EsciCommand = ReactiveCommand.Create(() =>
+            //{
+            //    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+            //        lifetime.Shutdown();
+            //});
+
             this.WhenActivated(d =>
             {
 
-                this.WhenAnyValue(
-                    x => x.PasswordText,
-                    (pass) =>
-                    !string.IsNullOrWhiteSpace(pass) &&
-                    pass == BindingT.Password)
-                .Subscribe(value => EnabledEntra = value)
-                .DisposeWith(d);
+//                this.WhenAnyValue(
+//                   x => x.PasswordText,
+//                   x => x.BindingT, // Osserva l'intero oggetto
+//                   (pass, binding) =>
+//                       !string.IsNullOrWhiteSpace(pass) &&
+//                       binding != null && // Controllo di sicurezza
+//                       pass == binding.Password)
+//.               Subscribe(value => EnabledEntra = value)
+//.               DisposeWith(d);
+
+                EntraCommand.DisposeWith(d);
+                //EsciCommand.DisposeWith(d);
             });
  
         }
@@ -81,15 +103,21 @@ namespace ViewModels
 
         private async Task OnEntra()
         {
-            if (EnabledEntra)
+            try
             {
+                // Salva le impostazioni dell'operatore selezionato
                 await Q.SaveSettings(BindingT);
-                //var weak = new WeakReference(this); // Monitora me stesso
 
+                // Naviga al Menu principale resettando lo stack di navigazione
                 await HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen));
             }
-            
-            
+            catch (Exception ex)
+            {
+                Debug.WriteLine($">>> [ERROR] Login fallito durante il salvataggio o la navigazione: {ex.Message}");
+                // Qui potresti aggiungere un'interaction per mostrare un messaggio di errore all'utente
+            }
+
+
         }
     }
 
@@ -131,13 +159,6 @@ namespace ViewModels
         {
             get => codiceoperatore;
             set => this.RaiseAndSetIfChanged(ref codiceoperatore, value);
-        }
-
-        private bool _enabledentra;
-        public bool EnabledEntra
-        {
-            get => _enabledentra;
-            set => this.RaiseAndSetIfChanged(ref _enabledentra, value);
         }
 
         #region Observable

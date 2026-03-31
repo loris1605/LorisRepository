@@ -1,6 +1,6 @@
 ﻿namespace Models.Tables
 {
-    public class Tariffa
+    public class Tariffa : IStandardTable
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;

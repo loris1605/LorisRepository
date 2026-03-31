@@ -130,6 +130,10 @@ namespace Leonardo
                         new SettoreInputView(), typeof(IViewFor<SettoreUpdViewModel>));
 
 
+            Locator.CurrentMutable.Register(() =>
+                        new TariffaGroupView(), typeof(IViewFor<TariffaGroupViewModel>));
+
+
             #endregion
 
 
