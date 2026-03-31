@@ -1,14 +1,10 @@
 ﻿using Models.Entity;
 using ReactiveUI;
 using SysNet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewModels
 {
@@ -63,10 +59,64 @@ namespace ViewModels
                 System.Diagnostics.Debug.WriteLine("Interaction Focus fallita: " + ex.Message);
             }
         }
+
+        private void OnBackEsc()
+        {
+            if (HostScreen is IConfigurazioneScreen Host)
+            {
+                RxApp.MainThreadScheduler.Schedule(() => {
+                    Host.ConfigurazioneInputRouter.NavigationStack.Clear();
+                    Host.GroupEnabled = true;
+                });
+            }
+        }
+
+        protected void OnBack(int value = 0)
+        {
+            if (HostScreen is IConfigurazioneScreen Host)
+            {
+                // Svuota completamente lo stack del router di input
+                Host.ConfigurazioneInputRouter.NavigateBack.Execute();
+                Host.ConfigurazioneInputRouter.NavigationStack.Clear();
+                Host.AggiornaGrid(value);
+                Host.GroupEnabled = true;
+            }
+        }
     }
 
     public partial class TariffaInputBase
     {
+        protected async Task<bool> ValidaDati()
+        {
+            if (IsNameEmpty)
+            {
+                InfoLabel = "Inserire il nome della tariffa";
+                await OnFocus(NomeFocus);
+                return false;
+            }
+            if (CheckLess2Name)
+            {
+                InfoLabel = "Formato Nome Tariffa non valido";
+                await OnFocus(NomeFocus);
+                return false;
+            }
+            if (IsLabelEmpty)
+            {
+                InfoLabel = "Inserire l'etichetta della tariffa";
+                await OnFocus(LabelFocus);
+                return false;
+            }
+            if (CheckLess2Label)
+            {
+                InfoLabel = "Formato Etichetta Tariffa non valido";
+                await OnFocus(LabelFocus);
+                return false;
+            }
+            InfoLabel = ""; // Pulisce eventuali errori precedenti
+            return true;
+
+        }
+
         private string nome = string.Empty;
         public string NomeTariffa
         {
@@ -107,6 +157,9 @@ namespace ViewModels
                 }
             }
         }
+
+        public Interaction<Unit, Unit> NomeFocus { get; } = new();
+        public Interaction<Unit, Unit> LabelFocus { get; } = new();
 
     }
 }
