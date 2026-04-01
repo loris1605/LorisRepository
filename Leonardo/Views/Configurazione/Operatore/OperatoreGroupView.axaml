@@ -107,7 +107,8 @@
                                      MinWidth="50"
                                      Margin="20,5"
                                      ToolTipText="GESTIONE PERMESSI"
-                                     HorizontalAlignment="Center">
+                                     HorizontalAlignment="Center"
+                                     Command="{Binding PermessiCommand}">
 
                     <Image Source="avares://ControlStyles/Resources/AggiungiIcon.png" Width="34" Height="34" />
                 

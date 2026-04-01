@@ -46,7 +46,8 @@ namespace Models.Mappers
             // Protezione a cascata (EF traduce correttamente questi null check in SQL CASE)
             NomeTariffa = (l != null && l.Tariffa != null) ? l.Tariffa.Nome : "Nessuna",
             EtichettaTariffa = (l != null && l.Tariffa != null) ? l.Tariffa.Label : "Nessuna",
-            PrezzoTariffa = (l != null && l.Tariffa != null) ? l.Tariffa.Prezzo : 0m
+            PrezzoTariffa = (l != null && l.Tariffa != null) ? l.Tariffa.Prezzo : 0m,
+            HasReparto = s.Reparti.Any()
         };
 
         public static Expression<Func<Settore, SettoreMap>> ToSimpleSettoreMap => s =>
@@ -55,7 +56,8 @@ namespace Models.Mappers
                Id = s.Id,
                NomeSettore = s.Nome,
                EtichettaSettore = s.Label,
-               CodiceTipoSettore = s.TipoSettoreId
+               CodiceTipoSettore = s.TipoSettoreId,
+               HasReparto = s.Reparti.Any()
            };
     }
 

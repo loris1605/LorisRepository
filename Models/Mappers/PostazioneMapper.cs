@@ -47,7 +47,8 @@ namespace Models.Mappers
             // Protezione profonda (p -> p.Settore -> p.Settore.TipoSettore)
             NomeTipoSettore = (p != null && p.Settore != null && p.Settore.TipoSettore != null)
                               ? p.Settore.TipoSettore.Nome
-                              : "N/A"
+                              : "N/A",
+            HasPermesso = o.Permessi.Any()
         };
 
         public static Expression<Func<Postazione, PostazioneMap>> ToSimplePostazioneMap => o => 
@@ -56,8 +57,9 @@ namespace Models.Mappers
                 Id = o.Id,
                 NomePostazione = o.Nome,
                 CodiceTipoPostazione = o.TipoPostazioneId,
-                CodiceTipoRientro = o.TipoRientroId
+                CodiceTipoRientro = o.TipoRientroId,
+                HasPermesso = o.Permessi.Any()
 
-            };
+           };
     }
 }

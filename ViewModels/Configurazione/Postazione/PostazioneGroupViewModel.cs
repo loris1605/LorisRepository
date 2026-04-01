@@ -12,129 +12,65 @@ namespace ViewModels
         public ReactiveCommand<Unit, Unit> OperatoriCommand { get; }
         public ReactiveCommand<Unit, Unit> SettoriCommand { get; }
         public ReactiveCommand<Unit, Unit> TariffeCommand { get; }
+        public ReactiveCommand<Unit, Unit> PermessiCommand { get; }
+        public ReactiveCommand<Unit, Unit> RepartiCommand { get; }
 
         public PostazioneGroupViewModel(IScreen host) : base(host)
         {
-            var canDel = this.WhenAnyValue(
-                           x => x.GroupBindingT.CodiceReparto, // Monitora la proprietà specifica
-                           x => x.GroupBindingT.Id,             // Monitora l'Id
-                           (permesso, id) =>
-                               this.GroupBindingT != null &&    // Check di sicurezza sull'oggetto padre
-                               permesso == 0 &&
-                               id != -1);
+            var canAction = this.WhenAnyValue(x => x.GroupBindingT, x => x.IsLoading,
+            (item, loading) => item != null && !loading);
 
-            OperatoriCommand = ReactiveCommand.CreateFromTask(OnGoToOperatori);
-            SettoriCommand = ReactiveCommand.CreateFromTask(OnGoToSettori);
-            TariffeCommand = ReactiveCommand.CreateFromTask(OnGoToTariffe);
+            var canDelete = this.WhenAnyValue(x => x.GroupBindingT, x => x.IsLoading,
+                (item, loading) => item != null &&
+                                    !item.HasPermesso &&
+                                    item.CodiceReparto != 0 &&
+                                    !loading);
 
-            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting,canDel);
+            var isNotLoading = this.WhenAnyValue(x => x.IsLoading)
+                .Select(loading => !loading);
+
+
+            // 2. Definizione Comandi tramite i metodi della Base
+            AddCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new PostazioneAddViewModel(ConfigHost)),
+                this.WhenAnyValue(x => x.IsLoading, x => !x));
+
+            UpdCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new PostazioneUpdViewModel(ConfigHost, GroupBindingT!.Id)), canAction);
+
+            DelCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new PostazioneDelViewModel(ConfigHost, GroupBindingT!.Id)), canDelete);
+
             
+            // Navigazioni Semplici (NavigateAndReset)
+            SettoriCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToReset(new SettoreGroupViewModel(ConfigHost)), isNotLoading);
+
+            TariffeCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToReset(new TariffaGroupViewModel(ConfigHost)), isNotLoading);
+
+            OperatoriCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToReset(new OperatoreGroupViewModel(ConfigHost)), isNotLoading);
+
+            PermessiCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToReset(new OperatoreAddViewModel(ConfigHost)), isNotLoading);
+
+            RepartiCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToReset(new OperatoreAddViewModel(ConfigHost)), isNotLoading);
+
             this.WhenActivated(d =>
             {
-
-                //var canSocioUpd = this.WhenAnyValue(
-                //            x => x.GroupBindingT.CodiceSocio,
-                //            (codice) => codice != 0);
-
-                //var canTesseraAdd = this.WhenAnyValue(
-                //                x => x.GroupBindingT,
-                //                x => x.GroupBindingT.CodiceSocio,
-                //                (bt, codice) => codice != 0 && bt is not null);
-
-                //var canTesseraDel = this.WhenAnyValue(
-                //                x => x.GroupBindingT,
-                //                x => x.GroupBindingT.NumeroTessera,
-                //                (bt, codice) => codice != "" && bt is not null);
-
-                //var canSocioDel = this.WhenAnyValue(
-                //            x => x.GroupBindingT.CodiceSocio,
-                //            x => x.GroupBindingT.NumeroTessera,
-                //            (codice, tessera) => codice != 0 && string.IsNullOrWhiteSpace(tessera));
-
-                //DelCommand = ReactiveCommand.CreateFromTask(OnDel, canDel).DisposeWith(d);
-
-                //DelCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnDelCodiceSocio, canSocioDel)
-                //.DisposeWith(d);
-                //UpdCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnUpdCodiceSocio, canSocioUpd)
-                //.DisposeWith(d);
-                //AddTesseraCommand = ReactiveCommand.CreateFromTask(OnAddTessera, canTesseraAdd)
-                //.DisposeWith(d);
-                //DelTesseraCommand = ReactiveCommand.CreateFromTask(OnDelTessera, canTesseraDel)
-                //.DisposeWith(d);
-                //UpdTesseraCommand = ReactiveCommand.CreateFromTask(OnUpdTessera, canTesseraDel)
-                //.DisposeWith(d);
 
                 OperatoriCommand.DisposeWith(d);
                 SettoriCommand.DisposeWith(d);
                 TariffeCommand.DisposeWith(d);
+                PermessiCommand.DisposeWith(d);
+                RepartiCommand.DisposeWith(d);
 
             });
-
-
-                    
+                  
         }
 
-        protected override  async Task OnDeleting()
-        {
-            if (HostScreen is IConfigurazioneScreen configurazioneHost)
-            {
-                configurazioneHost.GroupEnabled = false;
-                await configurazioneHost.ConfigurazioneInputRouter
-                    .Navigate
-                    .Execute(new PostazioneDelViewModel(configurazioneHost, GroupBindingT.Id));
-            }
-        }
-
-        protected override async Task OnAdding()
-        {
-            if (HostScreen is IConfigurazioneScreen configurazioneHost)
-            {
-                configurazioneHost.GroupEnabled = false;
-                await configurazioneHost.ConfigurazioneInputRouter
-                    .Navigate
-                    .Execute(new PostazioneAddViewModel(configurazioneHost));
-            }
-        }
-
-        protected override async Task OnUpdating()
-        {
-            if (HostScreen is IConfigurazioneScreen configurazioneHost)
-            {
-                configurazioneHost.GroupEnabled = false;
-                await configurazioneHost.ConfigurazioneInputRouter
-                    .Navigate
-                    .Execute(new PostazioneUpdViewModel(configurazioneHost, GroupBindingT.Id));
-            }
-        }
-
-        private async Task OnGoToOperatori()
-        {
-            if (HostScreen is IConfigurazioneScreen configurazioneHost)
-            {
-                await configurazioneHost.ConfigurazioneRouter
-                    .NavigateAndReset
-                    .Execute(new OperatoreGroupViewModel(configurazioneHost));
-            }
-        }
-
-        private async Task OnGoToSettori()
-        {
-            if (HostScreen is IConfigurazioneScreen configurazioneHost)
-            {
-                await configurazioneHost.ConfigurazioneRouter
-                    .NavigateAndReset
-                    .Execute(new SettoreGroupViewModel(configurazioneHost));
-            }
-        }
-
-        private async Task OnGoToTariffe()
-        {
-            if (HostScreen is IConfigurazioneScreen configurazioneHost)
-            {
-                await configurazioneHost.ConfigurazioneRouter
-                    .NavigateAndReset
-                    .Execute(new TariffaGroupViewModel(configurazioneHost));
-            }
-        }
+        
     }
 }

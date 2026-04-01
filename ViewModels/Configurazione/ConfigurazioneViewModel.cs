@@ -5,28 +5,28 @@ using System.Reactive.Linq;
 
 namespace ViewModels
 {
-
-    public interface IConfigurazioneScreen : IScreen
+    
+    public interface IGroupScreen : IScreen
     {
-        RoutingState ConfigurazioneRouter { get; }
-        RoutingState ConfigurazioneInputRouter { get; }
+        RoutingState GroupRouter { get; }
+        RoutingState InputRouter { get; }
         bool GroupEnabled { get; set; }
 
         void AggiornaGrid(int id);
     }
 
 
-    public partial class ConfigurazioneViewModel : BaseViewModel, IConfigurazioneScreen
+    public partial class ConfigurazioneViewModel : BaseViewModel, IGroupScreen
     {
-        public RoutingState ConfigurazioneRouter { get; } = new RoutingState();
-        public RoutingState ConfigurazioneInputRouter { get; } = new RoutingState();
-        public RoutingState Router => ConfigurazioneRouter;
+        public RoutingState GroupRouter { get; } = new RoutingState();
+        public RoutingState InputRouter { get; } = new RoutingState();
+        public RoutingState Router => GroupRouter;
 
         public ReactiveCommand<Unit, Unit> EsciCommand { get; }
 
         public ConfigurazioneViewModel(IScreen host) : base(host)
         {
-            EsciCommand = ReactiveCommand.Create(OnGoToMenu);
+            EsciCommand = ReactiveCommand.CreateFromTask(OnGoToMenu);
 
             this.WhenActivated(d =>
             {
@@ -37,19 +37,19 @@ namespace ViewModels
 
         protected override void OnFinalDestruction()
         {
-            ConfigurazioneRouter.NavigationStack.Clear();
-            ConfigurazioneInputRouter.NavigationStack.Clear();
+            GroupRouter.NavigationStack.Clear();
+            InputRouter.NavigationStack.Clear();
         }
 
         protected override async Task OnLoading()
         {
-            await ConfigurazioneRouter.NavigateAndReset.Execute(new OperatoreGroupViewModel(this));
+            await GroupRouter.NavigateAndReset.Execute(new OperatoreGroupViewModel(this));
             
         }
          
         public void AggiornaGrid(int id)
         {
-            if (ConfigurazioneRouter.GetCurrentViewModel() is IGroupViewModelBase groupVm)
+            if (GroupRouter.GetCurrentViewModel() is IGroupViewModelBase groupVm)
             {
                 // Passiamo l'ID al metodo di caricamento della lista
                 groupVm.CaricaDataSource(id);
@@ -59,9 +59,9 @@ namespace ViewModels
             }
         }
 
-        private void OnGoToMenu()
+        private async Task OnGoToMenu()
         {
-            HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen));
+            await HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen));
         }
     }
 

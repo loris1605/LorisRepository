@@ -22,6 +22,7 @@ dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
 dotnet_style_namespace_match_folder = true:suggestion
 dotnet_diagnostic.CA1816.severity = none
 dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.IDE0290.severity = none
 
 [*.cs]
 #### Stili di denominazione ####
@@ -86,6 +87,7 @@ csharp_prefer_simple_default_expression = true:suggestion
 csharp_style_prefer_local_over_anonymous_function = true:suggestion
 csharp_style_prefer_index_operator = true:suggestion
 csharp_style_prefer_range_operator = true:suggestion
+csharp_style_prefer_primary_constructors = false
 
 [*.vb]
 #### Stili di denominazione ####

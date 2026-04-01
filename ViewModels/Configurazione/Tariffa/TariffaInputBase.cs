@@ -12,7 +12,7 @@ namespace ViewModels
     {
         public string Name => BindingT.NomeTariffa.Trim() is null ? "" : BindingT.NomeTariffa.Trim();
         string Label => BindingT.EtichettaTariffa.Trim() is null ? "" : BindingT.EtichettaTariffa.Trim();
-        int CodiceTariffa => BindingT is null ? 0 : BindingT.Id;
+        protected int GetCodiceTariffa => BindingT is null ? 0 : BindingT.Id;
 
         protected bool IsNameEmpty => BindingT is not null && (Name == "");
         protected bool CheckLess2Name => Name.Length < 2;
@@ -62,10 +62,10 @@ namespace ViewModels
 
         private void OnBackEsc()
         {
-            if (HostScreen is IConfigurazioneScreen Host)
+            if (HostScreen is IGroupScreen Host)
             {
                 RxApp.MainThreadScheduler.Schedule(() => {
-                    Host.ConfigurazioneInputRouter.NavigationStack.Clear();
+                    Host.InputRouter.NavigationStack.Clear();
                     Host.GroupEnabled = true;
                 });
             }
@@ -73,11 +73,11 @@ namespace ViewModels
 
         protected void OnBack(int value = 0)
         {
-            if (HostScreen is IConfigurazioneScreen Host)
+            if (HostScreen is IGroupScreen Host)
             {
                 // Svuota completamente lo stack del router di input
-                Host.ConfigurazioneInputRouter.NavigateBack.Execute();
-                Host.ConfigurazioneInputRouter.NavigationStack.Clear();
+                Host.InputRouter.NavigateBack.Execute();
+                Host.InputRouter.NavigationStack.Clear();
                 Host.AggiornaGrid(value);
                 Host.GroupEnabled = true;
             }

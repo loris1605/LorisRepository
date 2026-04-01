@@ -4,7 +4,6 @@ using Models.Entity;
 using Models.Interfaces;
 using Models.Mappers;
 using Models.Tables;
-using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace Models.Repository
@@ -19,7 +18,7 @@ namespace Models.Repository
             if (id > 0)
                 return await LoadPostazioni(x => x.Id == id);
             else
-                return await LoadPostazioni(p => p.Id > -2);
+                return await LoadPostazioni(p => p.Id > -1);
 
         }
 

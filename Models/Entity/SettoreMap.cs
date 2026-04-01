@@ -13,6 +13,7 @@ namespace Models.Entity
         public string NomeTariffa { get; set; } = string.Empty;
         public string EtichettaTariffa { get; set; } = string.Empty;
         public decimal PrezzoTariffa { get; set; } = decimal.Zero;
+        public bool HasReparto { get; set; }
 
         public override string Nome => NomeSettore;
 

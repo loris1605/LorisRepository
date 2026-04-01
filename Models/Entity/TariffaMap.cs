@@ -9,6 +9,7 @@ namespace Models.Entity
         public string EtichettaTariffa { get; set; } = string.Empty;
         public decimal PrezzoTariffa { get; set; } = decimal.Zero;
         public bool IsFreeDrink { get; set; }
+        public bool HasListino { get; set; }
 
         // Sincronizzazione Getter/Setter per l'interfaccia IMap
         public override string Nome

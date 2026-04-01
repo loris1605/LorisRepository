@@ -37,17 +37,7 @@ public partial class OperatoreGroupView : ReactiveUserControl<OperatoreGroupView
 
             #region OneWay
 
-            this.OneWayBind(ViewModel,
-                    vm => vm.EnabledButton,
-                    v => v.CrudBar.UpdButton.IsEnabled,
-                    l => l)
-            .DisposeWith(d);
-
-            this.OneWayBind(ViewModel,
-                    vm => vm.EnabledButton,
-                    v => v.CrudBar.DelButton.IsEnabled,
-                    l => l)
-            .DisposeWith(d);
+            
 
             //this.OneWayBind(ViewModel,
             //        vm => vm.EnabledButton,

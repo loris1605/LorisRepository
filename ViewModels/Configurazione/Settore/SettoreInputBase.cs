@@ -55,10 +55,10 @@ namespace ViewModels
 
         private void OnBackEsc()
         {
-            if (HostScreen is IConfigurazioneScreen Host)
+            if (HostScreen is IGroupScreen Host)
             {
                 RxApp.MainThreadScheduler.Schedule(() => {
-                    Host.ConfigurazioneInputRouter.NavigationStack.Clear();
+                    Host.InputRouter.NavigationStack.Clear();
                     Host.GroupEnabled = true;
                 });
             }
@@ -66,11 +66,11 @@ namespace ViewModels
 
         protected void OnBack(int value = 0)
         {
-            if (HostScreen is IConfigurazioneScreen Host)
+            if (HostScreen is IGroupScreen Host)
             {
                 // Svuota completamente lo stack del router di input
-                Host.ConfigurazioneInputRouter.NavigateBack.Execute();
-                Host.ConfigurazioneInputRouter.NavigationStack.Clear();
+                Host.InputRouter.NavigateBack.Execute();
+                Host.InputRouter.NavigationStack.Clear();
                 Host.AggiornaGrid(value);
                 Host.GroupEnabled = true;
             }

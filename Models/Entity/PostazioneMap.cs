@@ -14,6 +14,7 @@ namespace Models.Entity
         public string NomeTipoSettore { get; set; } = string.Empty;
         public int CodiceTipoRientro { get; set; }
         public string NomeTipoRientro { get; set; } = string.Empty;
+        public bool HasPermesso { get; set; }
 
         public override string Nome
         {

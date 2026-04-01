@@ -1,30 +1,30 @@
-﻿using Models.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.Context;
+using Models.Entity;
+using Models.Mappers;
 using Models.Tables;
-using System.Diagnostics;
 
 namespace Models.Repository
 {
-    public class PermessoR : BaseRepository<AppDbContext, Permesso>
+    public class PermessoR : BaseRepository<PermessoDbContext, Permesso>
     {
-        private static int classCount;
+        public PermessoR() : base() { }
 
-        public PermessoR() : base()
+        public async Task<List<PostazioneElencoMap>> GetPostazioniSenzaPermesso(int operatoreId)
         {
-            System.Diagnostics.Debug.WriteLine($"***** [VM] {this.GetType().Name} " +
-                                               $"#{Interlocked.Increment(ref classCount)} caricato *****");
+            using PermessoDbContext _ctx = new();
+            // Recuperiamo tutte le postazioni
+            var tutteLePostazioni = await _ctx.Postazioni.ToListAsync();
+
+            // Filtriamo quelle che non hanno un permesso per l'operatore indicato
+            var postazioniSenzaPermesso = tutteLePostazioni
+                .Where(p => !_ctx.Permessi
+                    .Any(perm => perm.PostazioneId == p.Id && perm.OperatoreId == operatoreId))
+                .Select(PermessoMapper.ToMap)
+                .ToList();
+
+            return postazioniSenzaPermesso;
         }
 
-#if DEBUG
-
-        ~PermessoR()
-        {
-            // Questo apparirà nella finestra "Output" di Visual Studio
-            Debug.WriteLine($"***** [GC] {this.GetType().Name} " +
-                            $"#{classCount} DISTRUTTO *****");
-        }
-
-#endif
-
-        
     }
 }

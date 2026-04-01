@@ -7,7 +7,11 @@
         public string NomeTipoPostazione { get; set; } = string.Empty;
         public bool HasPermesso { get; set; }
 
-        public override string Nome => NomePostazione;
-        
+        public override string Nome
+        {
+            get => NomePostazione;
+            set => NomePostazione = value ?? string.Empty;
+        }
+
     }
 }

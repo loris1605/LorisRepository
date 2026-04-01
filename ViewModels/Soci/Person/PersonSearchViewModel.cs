@@ -217,8 +217,8 @@ namespace ViewModels
             if (HostScreen is ISociScreen sociHost)
             {
                 // Svuota completamente lo stack del router di input
-                sociHost.SociInputRouter.NavigateBack.Execute();
-                sociHost.SociInputRouter.NavigationStack.Clear();
+                sociHost.InputRouter.NavigateBack.Execute();
+                sociHost.InputRouter.NavigationStack.Clear();
                 sociHost.AggiornaGrid(DataSource);
                 sociHost.GroupEnabled = true;
             }

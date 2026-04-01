@@ -102,6 +102,9 @@ namespace Leonardo
             Locator.CurrentMutable.Register(() =>
                         new OperatoreInputView(), typeof(IViewFor<OperatoreDelViewModel>));
 
+            Locator.CurrentMutable.Register(() =>
+                        new PermessiView(), typeof(IViewFor<PermessiViewModel>));
+
 
 
             Locator.CurrentMutable.Register(() =>
@@ -132,6 +135,15 @@ namespace Leonardo
 
             Locator.CurrentMutable.Register(() =>
                         new TariffaGroupView(), typeof(IViewFor<TariffaGroupViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new TariffaInputView(), typeof(IViewFor<TariffaAddViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new TariffaInputView(), typeof(IViewFor<TariffaDelViewModel>));
+
+            Locator.CurrentMutable.Register(() =>
+                        new TariffaInputView(), typeof(IViewFor<TariffaUpdViewModel>));
 
 
             #endregion

@@ -3,6 +3,7 @@ using Models.Interfaces;
 using ReactiveUI;
 using SysNet;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
@@ -10,27 +11,21 @@ namespace ViewModels
 {
     public interface IGroupViewModelBase
     {
-        ViewModelActivator Activator { get; }
-        
         bool GroupFocus { get; set; }
-        int IdValue { get; set; }
-        int Param1 { get; set; }
-        int Param2 { get; set; }
-
         Task CaricaDataSource(int id = 0);
         Task CaricaByModel(object model);
 
     }
+   
 
-    
-
-    public abstract partial class GroupViewModel<T, W> : BaseViewModel, IGroupViewModelBase
-                                           where T : class where W : class, IGroupQ<T>
+    public abstract partial class GroupViewModel<T, W> : BaseViewModel
+                                           where T : class where W : class, IGroupQ<T>, new()
     {
-        public IGroupQ<T> Q { get; set; }
+        private IGroupQ<T> _q;
+        public IGroupQ<T> Q { get => _q; set => this.RaiseAndSetIfChanged(ref _q, value); }
 
-        public virtual int Param1 { get; set;}
-        public virtual int Param2 { get; set; }
+        protected IGroupScreen ConfigHost => HostScreen as IGroupScreen;
+
 
         public ReactiveCommand<Unit, Unit> AddCommand { get; protected set; }
         public ReactiveCommand<Unit, Unit> UpdCommand { get; protected set; }
@@ -39,35 +34,25 @@ namespace ViewModels
 
         public GroupViewModel(IScreen host) : base(host)
         {
-            AddCommand = ReactiveCommand.CreateFromTask(OnAdding);
-            UpdCommand = ReactiveCommand.CreateFromTask(OnUpdating);
-            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting);
+            Q = new W();
             FilterCommand = ReactiveCommand.CreateFromTask(OnLoading);
 
-            Q = Create<W>.Instance();
+            // Colleghiamo l'esecuzione del comando alla proprietà IsLoading
+            FilterCommand.IsExecuting.BindTo(this, x => x.IsLoading);
 
             this.WhenActivated(d =>
             {
-
-                this.WhenAnyValue(x => x.GroupBindingT)
-                    .Select(pass => pass is not null)
-                    .BindTo(this, x => x.EnabledButton)
-                    .DisposeWith(d);
-
-                this.WhenAnyValue(x => x.GroupBindingT)
-                    .Subscribe(val =>
-                    {
-                        BindingT = val;
-                        CheckNullBindingT = val == null;
-                    })
-                    .DisposeWith(d);
-
-                AddCommand.DisposeWith(d);
-                UpdCommand.DisposeWith(d);
-                DelCommand.DisposeWith(d);
-                FilterCommand.DisposeWith(d);
-
+                HandleCommandsDisposal(d);
+                
             });
+        }
+
+        private void HandleCommandsDisposal(CompositeDisposable d)
+        {
+            AddCommand?.DisposeWith(d);
+            UpdCommand?.DisposeWith(d);
+            DelCommand?.DisposeWith(d);
+            FilterCommand?.DisposeWith(d);
         }
 
         protected override void OnFinalDestruction()
@@ -76,79 +61,75 @@ namespace ViewModels
             Q = null;
             base.OnFinalDestruction();
         }
-        
-        protected async override Task OnLoading()
+
+        // Metodi core resi più robusti
+        protected override async Task OnLoading()
         {
-  
+            IsLoading = true;
             try
             {
-                // 2. Caricamento dati (assicurati che CaricaDataSource sia atteso)
                 await CaricaDataSource();
-
-                // 3. Controllo sicurezza sui dati ricevuti
-                if (DataSource != null && DataSource.Count > 0)
+                if (DataSource?.Count > 0)
                 {
                     GroupBindingT = DataSource[0];
                 }
             }
             catch (Exception ex)
             {
-                // Logga l'errore invece di ignorarlo, aiuta nel debug
-                System.Diagnostics.Debug.WriteLine($"Errore in OnLoading: {ex.Message}");
+                // Usa un servizio di logging reale se disponibile
+                System.Diagnostics.Debug.WriteLine($"[GroupViewModel] Load Error: {ex.Message}");
             }
-      
-        }
-
-        protected abstract Task OnAdding();
-        protected abstract Task OnUpdating();
-        protected abstract Task OnDeleting();
-
-        private async Task OnFilter()
-        {
-            await CaricaDataSource();
-            try
+            finally
             {
-
+                IsLoading = false;
             }
-            catch (NullReferenceException)
-            {
-                return;
-            }
-
-            if (DataSource.Count > 0)
-            {
-                GroupBindingT = DataSource[0];
-                GroupFocus = true;
-            }
-
         }
 
         public async Task CaricaDataSource(int id = 0)
         {
-            DataSource = await Q.Load(id);
-            GroupedDataSource = new DataGridCollectionView(DataSource);
-            GroupedDataSource.GroupDescriptions.Add(new DataGridPathGroupDescription("Titolo"));
-            GroupFocus = true;
-            IdIndex = id;
+            var data = await Q.Load(id);
+            UpdateCollection(data, id);
         }
 
         public async Task CaricaByModel(object model)
         {
-            DataSource = await Q.LoadByModel(model);
-            GroupedDataSource = new DataGridCollectionView(DataSource);
-            GroupedDataSource.GroupDescriptions.Add(new DataGridPathGroupDescription("Titolo"));
-
-            GroupFocus = true;
-            SelectedIndex = 0;
+            var data = await Q.LoadByModel(model);
+            UpdateCollection(data, 0);
         }
 
+        private void UpdateCollection(IList<T> data, int id)
+        {
+            DataSource = data;
 
-        #region Conditions
+            // Creazione View per la Grid: 
+            // TIP: Se usi Avalonia/WPF, considera di esporre questa property come Observable
+            var view = new DataGridCollectionView(DataSource);
+            view.GroupDescriptions.Add(new DataGridPathGroupDescription("Titolo"));
 
-        private bool Can() => Q != null && GroupBindingT != null;
+            GroupedDataSource = view;
+            GroupFocus = true;
+            IdIndex = id;
+        }
 
-        #endregion
+        protected IObservable<Unit> NavigateToReset(IRoutableViewModel vm)
+        {
+            if (ConfigHost == null) return Observable.Return(Unit.Default);
 
+            return ConfigHost.GroupRouter
+                .NavigateAndReset
+                .Execute(vm)
+                .Select(_ => Unit.Default);
+        }
+
+        protected IObservable<Unit> NavigateToInput(IRoutableViewModel vm)
+        {
+            if (ConfigHost == null) return Observable.Return(Unit.Default);
+
+            // Esegue il cambio di stato della UI e poi naviga
+            return Observable.Start(() => ConfigHost.GroupEnabled = false, RxApp.MainThreadScheduler)
+                .SelectMany(_ => ConfigHost.InputRouter.Navigate.Execute(vm))
+                .Select(_ => Unit.Default);
+        }
 
     }
 
@@ -156,8 +137,8 @@ namespace ViewModels
     {
         #region DataSource
 
-        private List<T> _datasource = [];
-        public List<T> DataSource
+        private IList<T> _datasource = [];
+        public IList<T> DataSource
         {
             get => _datasource;
             set => this.RaiseAndSetIfChanged(ref _datasource, value);
@@ -261,6 +242,14 @@ namespace ViewModels
         {
             get => _groupedDataSource;
             set => this.RaiseAndSetIfChanged(ref _groupedDataSource, value);
+        }
+
+        // Stato di caricamento reattivo
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => this.RaiseAndSetIfChanged(ref _isLoading, value);
         }
     }
 }

@@ -36,7 +36,8 @@ namespace Models.Mappers
                Id = s.Id,
                NomeTariffa = s.Nome,
                EtichettaTariffa = s.Label,
-               PrezzoTariffa = s.Prezzo
+               PrezzoTariffa = s.Prezzo,
+               HasListino = s.Listini.Any()
            };
     }
 }

@@ -19,11 +19,6 @@ public partial class TariffaGroupView : ReactiveUserControl<TariffaGroupViewMode
             //Bind PasswordText to TextBox
             #endregion
 
-            this.OneWayBind(ViewModel,
-                    vm => vm.EnabledButton,
-                    v => v.CrudBar.DelButton.IsEnabled,
-                    l => l)
-            .DisposeWith(d);
 
             Disposable.Create(() => {
                 this.DataContext = null;

@@ -34,30 +34,7 @@ public partial class SettoreGroupView : ReactiveUserControl<SettoreGroupViewMode
 
             #region OneWay
 
-            this.OneWayBind(ViewModel,
-                    vm => vm.EnabledButton,
-                    v => v.CrudBar.UpdButton.IsEnabled,
-                    l => l)
-            .DisposeWith(d);
-
-            this.OneWayBind(ViewModel,
-                    vm => vm.EnabledButton,
-                    v => v.CrudBar.DelButton.IsEnabled,
-                    l => l)
-            .DisposeWith(d);
-
-            //this.OneWayBind(ViewModel,
-            //        vm => vm.EnabledButton,
-            //        v => v.CodiceSocio.IsEnabled,
-            //        l => l)
-            //.DisposeWith(d);
-
-            #endregion
-
-            #region Commands
-
             
-
             #endregion
 
 

@@ -4,19 +4,19 @@ using SysNet;
 
 namespace ViewModels
 {
-    public class SettoreUpdViewModel : SettoreInputBase
+    public class TariffaUpdViewModel : TariffaInputBase
     {
-        private SettoreR Q { get; set; }
+        private TariffaR Q { get; set; }
         private readonly int _idDaModificare;
 
-        public SettoreUpdViewModel(IScreen host, int idoperatore) : base(host)
+        public TariffaUpdViewModel(IScreen host, int idoperatore) : base(host)
         {
             _idDaModificare = idoperatore;
 
-            Titolo = "Modifica Settore";
+            Titolo = "Modifica Tariffa";
             FieldsEnabled = true;
 
-            Q = Create<SettoreR>.Instance();
+            Q = Create<TariffaR>.Instance();
         }
 
         protected override void OnFinalDestruction()
@@ -27,11 +27,10 @@ namespace ViewModels
 
         protected override async Task OnLoading()
         {
-            TipoSettDataSource = await Q.LoadTipiSettore();
             BindingT = await Q.GetById(_idDaModificare);
-            if (GetCodiceSettore == 0)
+            if (GetCodiceTariffa == 0)
             {
-                InfoLabel = "Errore: Settore non trovato nel database.";
+                InfoLabel = "Errore: Tariffa non trovata nel database.";
                 FieldsEnabled = false;
             }
             await OnFocus(EscFocus);
@@ -43,13 +42,13 @@ namespace ViewModels
             if (!await ValidaDati()) return;
             if (await Q.EsisteNomeUpd(BindingT))
             {
-                InfoLabel = "Settore già registrato";
+                InfoLabel = "Tariffa già registrata";
                 return;
             }
-            
+
             if (!await Q.Upd(BindingT))
             {
-                InfoLabel = "Errore Db modifica Settore";
+                InfoLabel = "Errore Db modifica Tariffa";
                 await OnFocus(NomeFocus);
                 return;
             }

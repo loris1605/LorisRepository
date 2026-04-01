@@ -20,7 +20,6 @@ namespace ViewModels
         
         public InputViewModel(IScreen host) : base(host)
         {
-           
             SaveCommand = ReactiveCommand.CreateFromTask(OnSaving);
         }
 
@@ -28,7 +27,6 @@ namespace ViewModels
         {
             return Task.CompletedTask;
         }
-        
 
         protected abstract Task OnSaving();
 
@@ -47,7 +45,6 @@ namespace ViewModels
                 System.Diagnostics.Debug.WriteLine("Interaction Focus fallita: " + ex.Message);
             }
         }
-
 
     }
 

@@ -2,6 +2,7 @@
 using Models.Entity.Global;
 using Models.Tables;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Models.Mappers
 {
@@ -25,6 +26,29 @@ namespace Models.Mappers
             NomePostazione = p.Postazione != null ? p.Postazione.Nome : "N/A"
         };
 
-        
+        //public static Expression<Func<Postazione, PostazioneElencoMap>> ToPostazioneElencoMap => o =>
+        //   new PostazioneElencoMap
+        //   {
+        //       Id = o.Id,
+        //       NomePostazione = o.Nome,
+        //       CodiceTipoPostazione = o.TipoPostazioneId,
+        //       NomeTipoPostazione = o.TipoPostazione != null ? o.TipoPostazione.Nome : "N/A",
+        //       //HasPermesso = o.Permessi.Any()
+
+        //   };
+
+        public static PostazioneElencoMap ToMap(this Postazione o)
+        {
+            return new PostazioneElencoMap
+            {
+                Id = o.Id,
+                NomePostazione = o.Nome,
+                CodiceTipoPostazione = o.TipoPostazioneId,
+                NomeTipoPostazione = o.TipoPostazione != null ? o.TipoPostazione.Nome : "N/A" 
+                //HasPermesso = o.Permessi.Any()
+            };
+        }   
+
+
     }
 }

@@ -90,12 +90,13 @@
                                        Grid.Row="3"/>
 
                         <NumericUpDown Value="{Binding PrezzoTariffa}" 
+                                       x:Name="PrezzoBox"
                                        Grid.Row="3"
                                        Grid.Column="1"
                                        FormatString="C2" 
                                        Minimum="0" 
                                        Increment="0.5"
-                                       Margin="10,10,0,10"
+                                       Margin="25,2,25,2"
                                        ParsingNumberStyle="Currency">
                             <!--<NumericUpDown.InnerLeftContent>
                                 <TextBlock Text="€" VerticalAlignment="Center" Margin="5,0"/>

@@ -29,7 +29,7 @@
               Margin="50">
 			
             <r:RoutedViewHost x:Name="RouterHost" 
-                              Router="{Binding ConfigurazioneRouter}">
+                              Router="{Binding GroupRouter}">
     
                 <r:RoutedViewHost.PageTransition>
         <!-- Durata di 0.5 secondi -->
@@ -41,7 +41,7 @@
             <Viewbox Grid.Column="1">
                 <Border BorderThickness="1">
                     <r:RoutedViewHost x:Name="InputRouterHost" 
-                                      Router="{Binding ConfigurazioneInputRouter}">
+                                      Router="{Binding InputRouter}">
         
                         <r:RoutedViewHost.PageTransition>
             <!--     Durata di 0.5 secondi -->

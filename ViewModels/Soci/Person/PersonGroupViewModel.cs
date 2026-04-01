@@ -20,182 +20,92 @@ namespace ViewModels
 
         public PersonGroupViewModel(IScreen host) : base(host)
         {
-            var canDel = this.WhenAnyValue(
-                             x => x.GroupBindingT.CodiceSocio,
-                             (codice) => codice == 0);
+            var isHostValid = this.WhenAnyValue(x => x.HostScreen)
+            .Select(h => h is IGroupScreen);
 
-            //ridefiniamo il DelCommand aggiungendo il canDel
-            DelCommand = ReactiveCommand.CreateFromTask(OnDeleting, canDel);
+            var canAction = this.WhenAnyValue(x => x.GroupBindingT, x => x.IsLoading,
+            (item, loading) => item != null && !loading);
 
-            AddCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnAddCodiceSocio);
-            PersonSearchCommand = ReactiveCommand.CreateFromTask(OnPersonSearch);
+            var canDelete = this.WhenAnyValue(x => x.GroupBindingT, x => x.IsLoading,
+                (item, loading) => item != null &&
+                                   item.CodiceSocio != 0 &&
+                                   !loading);
 
-            this.WhenActivated(d =>
+            var canSocioDelete = this.WhenAnyValue(x => x.GroupBindingT, x => x.IsLoading,
+                (item, loading) => item != null &&
+                                   item.CodiceSocio != 0 &&
+                                   item.CodiceTessera == 0 &&
+                                   !loading);
+
+            var canTesseraDelete = this.WhenAnyValue(x => x.GroupBindingT, x => x.IsLoading,
+                (item, loading) => item != null &&
+                                   item.CodiceSocio != 0 &&
+                                   item.CodiceTessera != 0 &&
+                                   !loading);
+
+            var isNotLoading = this.WhenAnyValue(x => x.IsLoading)
+                .Select(loading => !loading);
+
+            // 2. Definizione Comandi tramite i metodi della Base
+            AddCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new PersonAddViewModel(ConfigHost)),
+                this.WhenAnyValue(x => x.IsLoading, x => !x));
+
+            UpdCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new PersonUpdViewModel(ConfigHost, GroupBindingT!.Id)), canAction);
+
+            DelCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new PersonDelViewModel(ConfigHost, GroupBindingT!.Id)), canDelete);
+
+            AddCodiceSocioCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new CodiceSocioAddViewModel(ConfigHost, GroupBindingT!.Id)), canAction);
+
+            DelCodiceSocioCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new CodiceSocioDelViewModel(ConfigHost,
+                                                                    GroupBindingT.CodiceSocio,
+                                                                    GroupBindingT.Id)), canSocioDelete);
+
+            UpdCodiceSocioCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new CodiceSocioUpdViewModel(ConfigHost,
+                                                                    GroupBindingT.CodiceSocio,
+                                                                    GroupBindingT.Id)), canDelete);
+
+            AddTesseraCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new TesseraAddViewModel(ConfigHost,
+                                        GroupBindingT.Id, GroupBindingT.CodiceSocio)), canDelete);
+
+            DelTesseraCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new TesseraDelViewModel(ConfigHost,
+                                        GroupBindingT.CodiceTessera, GroupBindingT.Id)), canTesseraDelete);
+
+            UpdTesseraCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new TesseraUpdViewModel(ConfigHost,
+                                        GroupBindingT.CodiceTessera, GroupBindingT.Id)), canTesseraDelete);
+
+            PersonSearchCommand = ReactiveCommand.CreateFromObservable(
+                () => NavigateToInput(new PersonSearchViewModel(ConfigHost)),
+                this.WhenAnyValue(x => x.IsLoading, x => !x));
+
+            this.WhenActivated(d => 
             {
-                this.WhenAnyValue(x => x.GroupBindingT)
-                    .Select(selection => selection != null)
-                    .BindTo(this, x => x.EnabledButton)
-                    .DisposeWith(d); // Usa l'activator della base
-
-
-                var canSocioUpd = this.WhenAnyValue(
-                            x => x.GroupBindingT.CodiceSocio,
-                            (codice) => codice != 0);
-
-                var canTesseraAdd = this.WhenAnyValue(
-                                x => x.GroupBindingT,
-                                x => x.GroupBindingT.CodiceSocio,
-                                (bt, codice) => codice != 0 && bt is not null);
-
-                var canTesseraDel = this.WhenAnyValue(
-                                x => x.GroupBindingT,
-                                x => x.GroupBindingT.NumeroTessera,
-                                (bt, codice) => codice != "" && bt is not null);
-
-                var canSocioDel = this.WhenAnyValue(
-                            x => x.GroupBindingT.CodiceSocio,
-                            x => x.GroupBindingT.NumeroTessera,
-                            (codice, tessera) => codice != 0 && string.IsNullOrWhiteSpace(tessera));
-                
-               
+                               
                 AddCodiceSocioCommand.DisposeWith(d);
-                DelCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnDelCodiceSocio, canSocioDel)
-                .DisposeWith(d);
-                UpdCodiceSocioCommand = ReactiveCommand.CreateFromTask(OnUpdCodiceSocio, canSocioUpd)
-                .DisposeWith(d);
-                AddTesseraCommand = ReactiveCommand.CreateFromTask(OnAddTessera, canTesseraAdd)
-                .DisposeWith(d);
-                DelTesseraCommand = ReactiveCommand.CreateFromTask(OnDelTessera, canTesseraDel)
-                .DisposeWith(d);
-                UpdTesseraCommand = ReactiveCommand.CreateFromTask(OnUpdTessera, canTesseraDel)
-                .DisposeWith(d);
-                
+                DelCodiceSocioCommand.DisposeWith(d);
+                UpdCodiceSocioCommand.DisposeWith(d);
+                AddTesseraCommand.DisposeWith(d);
+                DelTesseraCommand.DisposeWith(d);
+                UpdTesseraCommand.DisposeWith(d);
+                PersonSearchCommand.DisposeWith(d);
+
             });
 
         }
         
-        public override int Param1 => BindingT is null ? 0 : BindingT.CodiceSocio;
-        public override int Param2 => BindingT is null ? 0 : BindingT.CodiceTessera;
         public string NumeroSocio => BindingT is null ? "" : BindingT.NumeroSocio;
         public string NumeroTessera => BindingT is null ? "" : BindingT.NumeroTessera;
         public int CodiceSocio => BindingT is null ? 0 : BindingT.CodiceSocio;
         public int CodiceTessera => BindingT is null ? 0 : BindingT.CodiceTessera;
         public int Scadenza => BindingT is null ? 0 : BindingT.Scadenza;
-
-        protected override async Task OnAdding()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter.Navigate.Execute(new PersonAddViewModel(sociHost));
-            }
-        }
-
-        protected override async Task OnUpdating()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter.Navigate.Execute(new PersonUpdViewModel(sociHost, GroupBindingT.Id));
-            }
-        }
-
-        protected override async Task OnDeleting()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter.Navigate.Execute(new PersonDelViewModel(sociHost, GroupBindingT.Id));
-            }
-        }
-
-        private async Task OnAddCodiceSocio()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter
-                              .Navigate
-                              .Execute(new CodiceSocioAddViewModel(sociHost, GroupBindingT.Id));
-            }
-            await Task.CompletedTask;
-        }
-
-        private async Task OnDelCodiceSocio()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter
-                              .Navigate
-                              .Execute(new CodiceSocioDelViewModel(sociHost, 
-                                                                    GroupBindingT.CodiceSocio,
-                                                                    GroupBindingT.Id));
-            }
-            await Task.CompletedTask;
-        }
-
-        private async Task OnUpdCodiceSocio()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter
-                              .Navigate
-                              .Execute(new CodiceSocioUpdViewModel(sociHost,
-                                                                    GroupBindingT.CodiceSocio,
-                                                                    GroupBindingT.Id));
-            }
-            await Task.CompletedTask;
-        }
-
-        private async Task OnAddTessera()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter
-                              .Navigate
-                              .Execute(new TesseraAddViewModel(sociHost, 
-                                        GroupBindingT.Id, GroupBindingT.CodiceSocio));
-            }
-            await Task.CompletedTask;
-        }
-
-        private async Task OnDelTessera()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter
-                              .Navigate
-                              .Execute(new TesseraDelViewModel(sociHost,
-                                        GroupBindingT.CodiceTessera, GroupBindingT.Id ));
-            }
-            await Task.CompletedTask;
-        }
-
-        private async Task OnUpdTessera()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter
-                              .Navigate
-                              .Execute(new TesseraUpdViewModel(sociHost,
-                                        GroupBindingT.CodiceTessera, GroupBindingT.Id));
-            }
-            await Task.CompletedTask;
-        }
-
-        private async Task OnPersonSearch()
-        {
-            if (HostScreen is ISociScreen sociHost)
-            {
-                sociHost.GroupEnabled = false;
-                await sociHost.SociInputRouter.Navigate.Execute(new PersonSearchViewModel(sociHost));
-            }
-        }
 
         
     }

@@ -54,7 +54,7 @@ namespace ViewModels
             if (HostScreen is ISociScreen sociHost)
             {
                 RxApp.MainThreadScheduler.Schedule(() => {
-                    sociHost.SociInputRouter.NavigationStack.Clear();
+                    sociHost.InputRouter.NavigationStack.Clear();
                     sociHost.GroupEnabled = true;
                 });
             }
@@ -65,8 +65,8 @@ namespace ViewModels
             if (HostScreen is ISociScreen sociHost)
             {
                 // Svuota completamente lo stack del router di input
-                sociHost.SociInputRouter.NavigateBack.Execute();
-                sociHost.SociInputRouter.NavigationStack.Clear();
+                sociHost.InputRouter.NavigateBack.Execute();
+                sociHost.InputRouter.NavigationStack.Clear();
                 sociHost.AggiornaGrid(value);
                 sociHost.GroupEnabled = true;
             }

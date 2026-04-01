@@ -1,53 +1,55 @@
 ﻿using ReactiveUI;
 using System.Reactive;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
 namespace ViewModels
 {
-    public interface ISociScreen : IScreen
+    public interface ISociScreen : IGroupScreen
     {
-        RoutingState SociRouter { get; }
-        RoutingState SociInputRouter { get; }
-        bool GroupEnabled { get; set; }
-
         void AggiornaGrid(object model);
-        void AggiornaGrid(int id);
+        
     }
     public partial class SociViewModel : BaseViewModel, ISociScreen
     {
-        public RoutingState SociRouter { get; } = new RoutingState();
-        public RoutingState SociInputRouter { get; } = new RoutingState();
-        public RoutingState Router => SociRouter;
+        public RoutingState GroupRouter { get; } = new RoutingState();
+        public RoutingState InputRouter { get; } = new RoutingState();
+        public RoutingState Router => GroupRouter;
 
         public ReactiveCommand<Unit, Unit> EsciCommand { get; }
           
 
         public SociViewModel(IScreen host) : base(host)
         {
-            EsciCommand = ReactiveCommand.Create(OnGoToMenu);
+            EsciCommand = ReactiveCommand.CreateFromTask(OnGoToMenu);
 
+            this.WhenActivated(d =>
+            {
+                EsciCommand.DisposeWith(d);
+            });
         }
 
         protected override void OnFinalDestruction()
         {
-            SociRouter.NavigationStack.Clear();
-            SociInputRouter.NavigationStack.Clear();
+            GroupRouter.NavigationStack.Clear();
+            InputRouter.NavigationStack.Clear();
         }
 
         protected override async Task OnLoading()
         {
-            await SociRouter.NavigateAndReset.Execute(new PersonGroupViewModel(this));
+            await GroupRouter.NavigateAndReset.Execute(new PersonGroupViewModel(this));
+
         }
 
-        private void OnGoToMenu()
+        private async Task OnGoToMenu()
         {
-            HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen));
+            await HostScreen.Router.NavigateAndReset.Execute(new MenuViewModel(HostScreen));
         }
 
 
         public void AggiornaGrid(object model)
         {
-            if (SociRouter.GetCurrentViewModel() is IGroupViewModelBase groupVm)
+            if (GroupRouter.GetCurrentViewModel() is IGroupViewModelBase groupVm)
             {
                 // Passiamo l'ID al metodo di caricamento della lista
                 groupVm.CaricaByModel(model);
@@ -59,7 +61,7 @@ namespace ViewModels
 
         public void AggiornaGrid(int id)
         {
-            if (SociRouter.GetCurrentViewModel() is IGroupViewModelBase groupVm)
+            if (GroupRouter.GetCurrentViewModel() is IGroupViewModelBase groupVm)
             {
                 // Passiamo l'ID al metodo di caricamento della lista
                 groupVm.CaricaDataSource(id);
