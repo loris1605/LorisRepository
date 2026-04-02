@@ -91,7 +91,9 @@
                             <DataGridCheckBoxColumn 
                                         Header="Permesso"
                                         x:DataType="vmdt:PostazioneElencoMapDataType"
-                                        Binding="{Binding HasPermesso, Mode=TwoWay}" 
+                                        Binding="{Binding HasPermesso, 
+                                                 Mode=TwoWay,
+                                                 UpdateSourceTrigger=PropertyChanged}" 
                                         IsReadOnly="False"
                                         Width="Auto" />
                         

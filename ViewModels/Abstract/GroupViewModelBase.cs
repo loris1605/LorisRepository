@@ -18,7 +18,7 @@ namespace ViewModels
     }
    
 
-    public abstract partial class GroupViewModel<T, W> : BaseViewModel
+    public abstract partial class GroupViewModel<T, W> : BaseViewModel, IGroupViewModelBase
                                            where T : class where W : class, IGroupQ<T>, new()
     {
         private IGroupQ<T> _q;

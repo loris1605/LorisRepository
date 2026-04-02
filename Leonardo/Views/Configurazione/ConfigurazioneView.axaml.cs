@@ -29,10 +29,10 @@ public partial class ConfigurazioneView : ReactiveUserControl<ConfigurazioneView
 
             #region OneWay
 
-            //this.OneWayBind(ViewModel,
-            //                vm => vm.GroupEnabled,
-            //                v => v.RouterHost.IsEnabled)
-            //    .DisposeWith(d);
+            this.OneWayBind(ViewModel,
+                            vm => vm.GroupEnabled,
+                            v => v.RouterHost.IsEnabled)
+                .DisposeWith(d);
 
             #endregion
 
